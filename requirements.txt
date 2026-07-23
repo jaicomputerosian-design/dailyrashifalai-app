@@ -1,4 +1,1 @@
-fastapi==0.110.0
-uvicorn==0.28.0
-pydantic==2.7.0
-starlette==0.36.2
+# Static Web Application Deployment for DailyRashifalai.com
