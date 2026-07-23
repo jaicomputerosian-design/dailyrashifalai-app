@@ -176,7 +176,10 @@ if os.path.exists(static_dir):
 @app.get("/")
 def serve_index():
     """Serve SPA Web App main page."""
-    index_file = os.path.join(static_dir, "index.html")
-    if os.path.exists(index_file):
-        return FileResponse(index_file)
+    root_index = os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html")
+    if os.path.exists(root_index):
+        return FileResponse(root_index)
+    static_index = os.path.join(static_dir, "index.html")
+    if os.path.exists(static_index):
+        return FileResponse(static_index)
     return {"message": "VedaAstra AI Backend active. Static UI initializing..."}
