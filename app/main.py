@@ -32,13 +32,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Resolve Base & Static Directories
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 # In-memory storage for session snapshots, profiles, and hourly credit tracker
 PROFILES_DB: Dict[str, BirthProfile] = {}
 CHARTS_DB: Dict[str, ChartSnapshot] = {}
 CONVERSATIONS_DB: Dict[str, List[AstroAnswer]] = {}
 
 # Hourly AI Credit Limiter (30 queries per 1 hour window)
-HOURLY_CREDITS_DB: Dict[str, Dict[str, float]] = {} # session_id -> {count: float, window_start: float}
+HOURLY_CREDITS_DB: Dict[str, Dict[str, float]] = {}
 MAX_QUERIES_PER_HOUR = 30
 ONE_HOUR_SECONDS = 3600
 
@@ -115,7 +122,6 @@ def process_astro_chat(req: ChatRequest):
     
     credit_data = HOURLY_CREDITS_DB[session_id]
     if current_time - credit_data["window_start"] > ONE_HOUR_SECONDS:
-        # Reset window after 1 hour
         credit_data["count"] = 0
         credit_data["window_start"] = current_time
 
@@ -168,18 +174,13 @@ def delete_user_data(user_id: str):
     """GDPR/Privacy data deletion endpoint."""
     return {"status": "success", "message": f"All birth profiles and chat history for user {user_id} deleted successfully."}
 
-# Mount static web app directory
-static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
-if os.path.exists(static_dir):
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
-
 @app.get("/")
 def serve_index():
     """Serve SPA Web App main page."""
-    root_index = os.path.join(os.path.dirname(os.path.dirname(__file__)), "index.html")
+    root_index = os.path.join(BASE_DIR, "index.html")
     if os.path.exists(root_index):
         return FileResponse(root_index)
-    static_index = os.path.join(static_dir, "index.html")
+    static_index = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(static_index):
         return FileResponse(static_index)
     return {"message": "VedaAstra AI Backend active. Static UI initializing..."}

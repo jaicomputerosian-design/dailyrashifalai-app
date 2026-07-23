@@ -1,5 +1,6 @@
 import os
 import sys
+import ssl
 import base64
 import json
 import urllib.request
@@ -8,11 +9,13 @@ import urllib.error
 REPO_NAME = "dailyrashifalai-app"
 TOKEN_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "github_token.txt")
 
+# Create unverified SSL context for macOS python urllib compatibility
+ssl_context = ssl._create_unverified_context()
+
 def get_saved_token() -> str:
     """Reads token from local saved config file github_token.txt or command line."""
     if len(sys.argv) > 1 and sys.argv[1].startswith("ghp_"):
         token = sys.argv[1].strip()
-        # Save for future automated runs
         with open(TOKEN_FILE, "w") as f:
             f.write(token)
         return token
@@ -39,7 +42,7 @@ def github_api_request(url: str, token: str, method: str = "GET", data: dict = N
     }
     encoded_data = json.dumps(data).encode("utf-8") if data else None
     req = urllib.request.Request(url, data=encoded_data, headers=headers, method=method)
-    with urllib.request.urlopen(req) as resp:
+    with urllib.request.urlopen(req, context=ssl_context) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 def push_single_atomic_commit(token: str):
@@ -106,7 +109,7 @@ def push_single_atomic_commit(token: str):
     
     # 6. Create new single commit
     new_commit_payload = {
-        "message": "VedaAstra Auto-Sync Complete Release for DailyRashifalai.com",
+        "message": "VedaAstra Unified Serverless Architecture Fix for DailyRashifalai.com",
         "tree": new_tree["sha"],
         "parents": [parent_commit_sha]
     }
