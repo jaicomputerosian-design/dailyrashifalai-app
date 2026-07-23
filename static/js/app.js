@@ -837,6 +837,18 @@ function sendChatMessage() {
     }, 500);
 }
 
+function clearChatHistory() {
+    const chatBox = document.getElementById('chat-history-box');
+    if (!chatBox) return;
+    chatBox.innerHTML = `
+        <div class="chat-message ai">
+            <strong>प्रणाम! 🕉️</strong><br>
+            मैं आपका वैदिक AI ज्योतिष सलाहकार हूँ। अपना <strong>नाम, जन्म-तिथि, जन्म समय तथा स्थान</strong> बताएँ या ऊपर दिए गए विकल्पों में से प्रश्न चुनें। भारत के वेदों, विष्णु पुराण, अग्नि पुराण तथा बृहत्पाराशर होराशास्त्र से आपकी कुंडली का मिलान करके आपका <strong>सत्य मार्ग (True Path & Hindu Remedies)</strong> बताया जाएगा।
+        </div>
+    `;
+    state.chatHistory = [];
+}
+
 function buyMinuteRecharge() {
     state.isTimerExpired = false;
     state.freeSecondsLeft = 60;

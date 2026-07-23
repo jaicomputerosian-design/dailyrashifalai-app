@@ -148,26 +148,30 @@
                 </div>
 
                 <div class="glass-card chat-container">
-                    <div class="chip-group">
-                        <div class="chip" onclick="sendQuickChip('वेद व पुराणों के अनुसार मेरा सही रास्ता व करियर क्या है?')" data-i18n="chip1">वेद व पुराणों के अनुसार मेरा सही रास्ता व करियर क्या है?</div>
-                        <div class="chip" onclick="sendQuickChip('विवाह व जीवनसाथी का योग कैसा रहेगा?')" data-i18n="chip2">विवाह व जीवनसाथी का योग कैसा रहेगा?</div>
-                        <div class="chip" onclick="sendQuickChip('धन संचय और आर्थिक उन्नति का क्या शास्त्र मार्ग है?')" data-i18n="chip3">धन संचय और आर्थिक उन्नति का क्या शास्त्र मार्ग है?</div>
-                        <div class="chip" onclick="sendQuickChip('वर्तमान महादशा का क्या प्रभाव पड़ेगा?')" data-i18n="chip4">वर्तमान महादशा का क्या प्रभाव पड़ेगा?</div>
-                        <div class="chip" onclick="sendQuickChip('मानसिक शांति व दैनिक पूजा के क्या वैदिक उपाय हैं?')" data-i18n="chip5">मानसिक शांति व दैनिक पूजा के क्या उपाय हैं?</div>
+                    <div class="chip-group" style="margin-bottom:12px;">
+                        <div class="chip" onclick="sendQuickChip('वेद व पुराणों के अनुसार मेरा सही रास्ता व करियर क्या है?')" data-i18n="chip1">💼 करियर व व्यापार</div>
+                        <div class="chip" onclick="sendQuickChip('विवाह व जीवनसाथी का योग कैसा रहेगा?')" data-i18n="chip2">💑 विवाह व जीवनसाथी</div>
+                        <div class="chip" onclick="sendQuickChip('धन संचय और आर्थिक उन्नति का क्या शास्त्र मार्ग है?')" data-i18n="chip3">💰 धन व संपत्ति</div>
+                        <div class="chip" onclick="sendQuickChip('वर्तमान महादशा का क्या प्रभाव पड़ेगा?')" data-i18n="chip4">⏳ वर्तमान महादशा</div>
+                        <div class="chip" onclick="sendQuickChip('मानसिक शांति व दैनिक पूजा के क्या वैदिक उपाय हैं?')" data-i18n="chip5">🧘 शांति व वैदिक उपाय</div>
                     </div>
 
                     <div class="chat-history" id="chat-history-box">
                         <div class="chat-message ai">
                             <strong>प्रणाम! 🕉️</strong><br>
-                            मैं आपका वैदिक AI ज्योतिष सलाहकार हूँ। अपना <strong>नाम, जन्म-तिथि, जन्म समय तथा स्थान</strong> बताएँ या नीचे दिए गए विकल्पों में से प्रश्न चुनें। भारत के वेदों, विष्णु पुराण, अग्नि पुराण तथा बृहत्पाराशर होराशास्त्र से आपकी कुंडली का मिलान करके आपका <strong>सत्य मार्ग (True Path & Hindu Remedies)</strong> बताया जाएगा।
+                            मैं आपका वैदिक AI ज्योतिष सलाहकार हूँ। अपना <strong>नाम, जन्म-तिथि, जन्म समय तथा स्थान</strong> बताएँ या ऊपर दिए गए विकल्पों में से प्रश्न चुनें। भारत के वेदों, विष्णु पुराण, अग्नि पुराण तथा बृहत्पाराशर होराशास्त्र से आपकी कुंडली का मिलान करके आपका <strong>सत्य मार्ग (True Path & Hindu Remedies)</strong> बताया जाएगा।
                         </div>
                     </div>
 
                     <div class="chat-input-box">
                         <input type="text" id="input-chat-query" class="chat-input" placeholder="अपना नाम, जन्म समय या प्रश्न यहाँ लिखें...">
-                        <!-- Voice Mic Speech Recognition Button -->
+                        <!-- Voice Mic Button -->
                         <button class="btn-primary" id="btn-voice-mic" onclick="toggleVoiceSpeech()" title="माइक से बोलकर पूछें" style="padding:8px 12px; background:rgba(255,255,255,0.1);">
                             <span id="mic-icon">🎙️</span>
+                        </button>
+                        <!-- Clear Chat History Button -->
+                        <button class="btn-primary" onclick="clearChatHistory()" title="चैट साफ़ करें" style="padding:8px 12px; background:rgba(239,68,68,0.2); border-color:var(--accent-red); color:#FCA5A5;">
+                            🗑️
                         </button>
                         <button class="btn-primary" id="btn-send-chat">
                             <span>🚀</span>
