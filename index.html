@@ -394,6 +394,125 @@
         </main>
     </div>
 
+    <!-- Razorpay Compliance Footer -->
+    <footer style="position:relative; z-index:10; background:rgba(7, 9, 19, 0.95); border-top:1px solid var(--border-gold); padding:24px 20px; text-align:center; margin-top:20px;">
+        <div style="max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:16px; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.4rem;">🕉️</span>
+                <strong style="color:var(--text-gold); font-size:1.1rem;">VedaAstra AI (DailyRashifalai.com)</strong>
+            </div>
+
+            <!-- Razorpay Mandatory Compliance Links -->
+            <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; font-size:0.88rem;">
+                <a href="javascript:void(0)" onclick="openLegalModal('modal-privacy')" style="color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#9CA3AF'">🔒 Privacy Policy (गोपनीयता नीति)</a>
+                <a href="javascript:void(0)" onclick="openLegalModal('modal-terms')" style="color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#9CA3AF'">📜 Terms & Conditions (नियम व शर्तें)</a>
+                <a href="javascript:void(0)" onclick="openLegalModal('modal-refund')" style="color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#9CA3AF'">💸 Refund & Cancellation (रिफंड नीति)</a>
+                <a href="javascript:void(0)" onclick="openLegalModal('modal-shipping')" style="color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#9CA3AF'">🚚 Shipping & Delivery (डिलीवरी नीति)</a>
+                <a href="javascript:void(0)" onclick="openLegalModal('modal-contact')" style="color:var(--text-muted); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#9CA3AF'">📞 Contact Us (संपर्क करें)</a>
+            </div>
+
+            <p style="color:var(--text-muted); font-size:0.8rem; line-height:1.5;">
+                © 2026 DailyRashifalai.com. All Rights Reserved. Powered by VedaAstra AI Engine.<br>
+                100% Grounded in Ancient Bharat Scriptures (Rigveda, Vishnu Purana, Agni Purana & Brihat Parashara Hora Shastra).
+            </p>
+        </div>
+    </footer>
+
+    <!-- Razorpay Compliance Modal 1: Privacy Policy -->
+    <div class="modal-overlay" id="modal-privacy">
+        <div class="modal-card" style="max-width:700px; text-align:left; max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 class="modal-title" style="margin:0;">🔒 Privacy Policy (गोपनीयता नीति)</h2>
+                <button onclick="closeLegalModal('modal-privacy')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✖</button>
+            </div>
+            <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">
+                <p><strong>Effective Date:</strong> July 24, 2026</p><br>
+                <p>At <strong>DailyRashifalai.com (VedaAstra AI)</strong>, we take the privacy of your astrological birth details and personal data extremely seriously.</p><br>
+                <h3 style="color:var(--text-gold);">1. Information We Collect</h3>
+                <p>We collect birth details (Name, Date of Birth, Time of Birth, Birth Place coordinates) solely to generate accurate Vedic Horoscopes, Lahiri planetary positions, Dasha timelines, and AI astrological guidance.</p><br>
+                <h3 style="color:var(--text-gold);">2. Data Protection & Security</h3>
+                <p>Your data is processed using SSL encryption and is never sold, shared, or rented to third-party advertisers. Payment details are processed directly through Razorpay's PCI-DSS compliant secure gateways.</p><br>
+                <h3 style="color:var(--text-gold);">3. Cookies & Local Storage</h3>
+                <p>We use local browser storage to save your language preference and active kundli session locally on your device.</p><br>
+                <p>For privacy inquiries, contact us at <strong>support@dailyrashifalai.com</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Razorpay Compliance Modal 2: Terms & Conditions -->
+    <div class="modal-overlay" id="modal-terms">
+        <div class="modal-card" style="max-width:700px; text-align:left; max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 class="modal-title" style="margin:0;">📜 Terms & Conditions (नियम और शर्तें)</h2>
+                <button onclick="closeLegalModal('modal-terms')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✖</button>
+            </div>
+            <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">
+                <p>Welcome to <strong>DailyRashifalai.com</strong>. By accessing our website and purchasing our digital subscription plans (₹100 1-Minute Recharge / ₹3000 1-Day Pass), you agree to these terms.</p><br>
+                <h3 style="color:var(--text-gold);">1. Digital SaaS & AI Services</h3>
+                <p>VedaAstra AI provides automated astrological analysis based on classical Hindu scriptures (Brihat Parashara Hora Shastra, Rigveda, Vishnu Purana). Guidance provided is for personal reflection and spiritual wellness.</p><br>
+                <h3 style="color:var(--text-gold);">2. Pricing & Subscriptions</h3>
+                <p>Plan 1: ₹100 for 1 Minute Usage Recharge. Plan 2: ₹3000 for 1-Day Unlimited Pass. All prices are in INR. Payment is processed securely via Razorpay.</p><br>
+                <h3 style="color:var(--text-gold);">3. Fair Usage Policy</h3>
+                <p>AI queries are subject to a rate-limit of 30 questions per hour to maintain system stability and prevent automated spam bots.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Razorpay Compliance Modal 3: Refund & Cancellation Policy -->
+    <div class="modal-overlay" id="modal-refund">
+        <div class="modal-card" style="max-width:700px; text-align:left; max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 class="modal-title" style="margin:0;">💸 Refund & Cancellation Policy (रिफंड नीति)</h2>
+                <button onclick="closeLegalModal('modal-refund')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✖</button>
+            </div>
+            <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">
+                <h3 style="color:var(--text-gold);">1. Instant Digital Service Delivery</h3>
+                <p>Since <strong>DailyRashifalai.com</strong> offers instant digital AI astrological analysis and digital credit recharges, services are consumed immediately upon payment completion.</p><br>
+                <h3 style="color:var(--text-gold);">2. Refund Eligibility</h3>
+                <p>If payment was debited from your account but credits/access were not delivered due to a technical error, a 100% full refund will be processed to your original payment method within 5-7 working days.</p><br>
+                <h3 style="color:var(--text-gold);">3. Cancellation Process</h3>
+                <p>To request a refund for failed transactions, please email your Razorpay Payment ID to <strong>support@dailyrashifalai.com</strong> within 7 days of purchase.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Razorpay Compliance Modal 4: Shipping & Delivery Policy -->
+    <div class="modal-overlay" id="modal-shipping">
+        <div class="modal-card" style="max-width:700px; text-align:left; max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 class="modal-title" style="margin:0;">🚚 Shipping & Delivery Policy (डिलीवरी नीति)</h2>
+                <button onclick="closeLegalModal('modal-shipping')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✖</button>
+            </div>
+            <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">
+                <h3 style="color:var(--text-gold);">1. Digital SaaS Delivery</h3>
+                <p><strong>DailyRashifalai.com</strong> provides purely digital SaaS products (AI Astrological Chat, Kundli PDF Reports, Planetary Analysis). No physical goods are shipped.</p><br>
+                <h3 style="color:var(--text-gold);">2. Instant Access Timeline</h3>
+                <p>Upon successful payment confirmation via Razorpay, your account usage credits (1-Minute Recharge or 1-Day Pass) are activated <strong>instantly (within 0 minutes)</strong> directly inside your web browser session.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Razorpay Compliance Modal 5: Contact Us & Merchant Details -->
+    <div class="modal-overlay" id="modal-contact">
+        <div class="modal-card" style="max-width:700px; text-align:left; max-height:85vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 class="modal-title" style="margin:0;">📞 Contact Us (संपर्क विवरण)</h2>
+                <button onclick="closeLegalModal('modal-contact')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✖</button>
+            </div>
+            <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">
+                <p>If you have any questions regarding your subscription, payments, or astrological reports, please reach out to our official merchant support team:</p><br>
+                <div style="background:rgba(245,158,11,0.1); border:1px solid var(--accent-gold); padding:16px; border-radius:12px;">
+                    <p style="color:var(--text-gold); font-size:1rem; font-weight:700;">Merchant Business Details (DailyRashifalai.com)</p>
+                    <p style="margin-top:6px;"><strong>Business Name:</strong> VedaAstra AI / DailyRashifalai</p>
+                    <p><strong>Support Email:</strong> support@dailyrashifalai.com</p>
+                    <p><strong>Merchant Helpline:</strong> +91-9876543210</p>
+                    <p><strong>Website URL:</strong> https://dailyrashifalai.com</p>
+                    <p><strong>Support Hours:</strong> Monday to Saturday (9:00 AM - 7:00 PM IST)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 1-Minute Expired Paywall Modal (Clean Official Plans with Razorpay Integration) -->
     <div class="modal-overlay" id="paywall-modal">
         <div class="modal-card">

@@ -849,6 +849,16 @@ function clearChatHistory() {
     state.chatHistory = [];
 }
 
+function openLegalModal(modalId) {
+    const el = document.getElementById(modalId);
+    if (el) el.classList.add('active');
+}
+
+function closeLegalModal(modalId) {
+    const el = document.getElementById(modalId);
+    if (el) el.classList.remove('active');
+}
+
 function buyMinuteRecharge() {
     state.isTimerExpired = false;
     state.freeSecondsLeft = 60;
