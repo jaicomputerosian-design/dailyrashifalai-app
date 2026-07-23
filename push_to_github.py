@@ -1,10 +1,35 @@
 import os
+import sys
 import base64
 import json
 import urllib.request
 import urllib.error
 
 REPO_NAME = "dailyrashifalai-app"
+TOKEN_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "github_token.txt")
+
+def get_saved_token() -> str:
+    """Reads token from local saved config file github_token.txt or command line."""
+    if len(sys.argv) > 1 and sys.argv[1].startswith("ghp_"):
+        token = sys.argv[1].strip()
+        # Save for future automated runs
+        with open(TOKEN_FILE, "w") as f:
+            f.write(token)
+        return token
+    
+    if os.path.exists(TOKEN_FILE):
+        with open(TOKEN_FILE, "r") as f:
+            token = f.read().strip()
+            if token:
+                print(f"🔑 Using saved GitHub Token from github_token.txt")
+                return token
+
+    token = input("Enter your GitHub Personal Access Token (ghp_...): ").strip()
+    if token:
+        with open(TOKEN_FILE, "w") as f:
+            f.write(token)
+        print("💾 Token saved locally in github_token.txt for automatic future pushes!")
+    return token
 
 def github_api_request(url: str, token: str, method: str = "GET", data: dict = None):
     headers = {
@@ -19,7 +44,7 @@ def github_api_request(url: str, token: str, method: str = "GET", data: dict = N
 
 def push_single_atomic_commit(token: str):
     print("==========================================================")
-    print(" 🕉️  VedaAstra Single Atomic Commit Uploader")
+    print(" 🕉️  VedaAstra Automated GitHub & Vercel Auto-Push")
     print("==========================================================")
     
     # 1. Get authenticated user
@@ -50,7 +75,7 @@ def push_single_atomic_commit(token: str):
     for root, dirs, files in os.walk(workspace_dir):
         dirs[:] = [d for d in dirs if d not in ignore_dirs]
         for f in files:
-            if f.endswith(".pyc") or f == ".DS_Store" or f == "Astro_Ai_APP_Complete.zip":
+            if f.endswith(".pyc") or f == ".DS_Store" or f == "Astro_Ai_APP_Complete.zip" or f == "github_token.txt":
                 continue
             full_path = os.path.join(root, f)
             rel_path = os.path.relpath(full_path, workspace_dir).replace("\\", "/")
@@ -81,7 +106,7 @@ def push_single_atomic_commit(token: str):
     
     # 6. Create new single commit
     new_commit_payload = {
-        "message": "VedaAstra AI Complete Single Commit Release for Vercel",
+        "message": "VedaAstra Auto-Sync Complete Release for DailyRashifalai.com",
         "tree": new_tree["sha"],
         "parents": [parent_commit_sha]
     }
@@ -97,6 +122,6 @@ def push_single_atomic_commit(token: str):
     print("==========================================================")
 
 if __name__ == "__main__":
-    t = input("Enter your GitHub Personal Access Token (ghp_...): ").strip()
+    t = get_saved_token()
     if t:
         push_single_atomic_commit(t)
