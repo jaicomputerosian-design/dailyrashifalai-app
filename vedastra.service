@@ -1,0 +1,15 @@
+[Unit]
+Description=VedaAstra AI Service (DailyRashifalai.com)
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/var/www/dailyrashifalai
+ExecStart=/var/www/dailyrashifalai/venv/bin/python3 run.py
+Restart=always
+RestartSec=5
+Environment=PORT=8000
+Environment=OPENAI_API_KEY=""
+
+[Install]
+WantedBy=multi-user.target
