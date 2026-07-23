@@ -3,8 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VedaAstra AI | वेदअस्त्र AI - वेद, पुराण एवं ज्योतिष मार्गदर्शक</title>
+    <title>VedaAstra AI | वेदअस्त्र AI - वेद, पुराण एवं ज्योतिष मार्गदर्शक (DailyRashifalai.com)</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="भारत के वेद, विष्णु पुराण, अग्नि पुराण तथा बृहत्पाराशर होराशास्त्र से 100% प्रामाणिक ज्योतिष AI सलाह। अपनी कुंडली, नवांश, विंशोत्तरी दशा व दैनिक गोचर फल जानें।">
+    <meta name="keywords" content="Vedic Astrology, AI Kundli, Rashifal, Vedas, Puranas, BPHS, Kundli Generator, Vimshottari Dasha, Daily Rashifal">
+    <meta name="author" content="DailyRashifalai.com">
+
+    <!-- OpenGraph & WhatsApp Social Preview Banner Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dailyrashifalai.com/">
+    <meta property="og:title" content="VedaAstra AI | वेदअस्त्र AI - वेद, पुराण एवं ज्योतिष मार्गदर्शक">
+    <meta property="og:description" content="भारत के सनातन ज्ञान, ऋग्वेद, विष्णु पुराण और पराशर शास्त्र से अपना सत्य मार्ग और दैनिक उपाय जानें।">
+    <meta property="og:image" content="https://dailyrashifalai.com/static/css/banner.jpg">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VedaAstra AI (वेदअस्त्र AI) - DailyRashifalai.com">
+    <meta name="twitter:description" content="100% Scriptural Vedic Astrology AI Grounded in Ancient Bharat Scriptures.">
+
+    <!-- Schema.org JSON-LD Structured Data for Google Ranking -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AstrologicalService",
+      "name": "VedaAstra AI (वेदअस्त्र AI)",
+      "url": "https://dailyrashifalai.com/",
+      "logo": "https://dailyrashifalai.com/static/css/logo.png",
+      "description": "Authentic Vedic Astrology AI grounded in Rigveda, Vishnu Purana, Agni Purana & Brihat Parashara Hora Shastra.",
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "1 Minute Recharge Plan",
+          "price": "100",
+          "priceCurrency": "INR"
+        },
+        {
+          "@type": "Offer",
+          "name": "1 Day Unlimited Pass",
+          "price": "3000",
+          "priceCurrency": "INR"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Razorpay & HTML2PDF SDK Scripts -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="stars-bg"></div>
@@ -73,7 +122,7 @@
         </sidebar>
 
         <!-- Main Content Area -->
-        <main>
+        <main id="pdf-report-content">
             <!-- Tab 1: AI Astrology Chat (FEATURED FIRST TAB) -->
             <div class="tab-content active" id="tab-chat">
                 <div class="section-header">
@@ -88,9 +137,14 @@
                             <h3 style="color:var(--text-gold); font-size:1.15rem;">🕉️ भारत के सनातन ज्ञान, वेदों एवं पुराणों से अपना सत्य मार्ग जानें</h3>
                             <p style="font-size:0.88rem; color:var(--text-muted); margin-top:4px;">आपकी जन्म-तिथि, समय और स्थान का मिलान महर्षि पराशर, ऋग्वेद एवं विष्णु पुराण के सिद्धांतों से किया जाता है।</p>
                         </div>
-                        <button class="btn-primary" onclick="switchTab('profile')" style="padding:8px 16px; font-size:0.88rem;">
-                            ✏️ जन्म विवरण बदलें
-                        </button>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" onclick="switchTab('profile')" style="padding:8px 14px; font-size:0.85rem;">
+                                ✏️ विवरण बदलें
+                            </button>
+                            <button class="btn-primary" onclick="exportKundliPDF()" style="padding:8px 14px; font-size:0.85rem; background:linear-gradient(135deg,#10B981,#059669);">
+                                📄 कुंडली PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -112,6 +166,10 @@
 
                     <div class="chat-input-box">
                         <input type="text" id="input-chat-query" class="chat-input" placeholder="अपना नाम, जन्म समय या प्रश्न यहाँ लिखें...">
+                        <!-- Voice Mic Speech Recognition Button -->
+                        <button class="btn-primary" id="btn-voice-mic" onclick="toggleVoiceSpeech()" title="माइक से बोलकर पूछें" style="padding:8px 12px; background:rgba(255,255,255,0.1);">
+                            <span id="mic-icon">🎙️</span>
+                        </button>
                         <button class="btn-primary" id="btn-send-chat">
                             <span>🚀</span>
                             <span data-i18n="btnSend">शास्त्रों से रास्ता जानें</span>
@@ -120,7 +178,7 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Birth Profile Form -->
+            <!-- Tab 2: Birth Profile Form with Nominatim Dynamic City Lookup & GPS Detection -->
             <div class="tab-content" id="tab-profile">
                 <div class="section-header">
                     <h2 class="section-title"><span data-i18n="titleProfile">जन्म प्रोफ़ाइल एवं स्थान विवरण</span></h2>
@@ -148,19 +206,15 @@
                                     <span data-i18n="labelApproxTime">अनुमानित जन्म समय है (समय शुद्ध नहीं है)</span>
                                 </label>
                             </div>
-                            <div class="form-group">
-                                <label data-i18n="labelPlace">जन्म स्थान / नगर (Preset Quick Lookup)</label>
-                                <input type="text" id="input-place" class="form-control" list="preset-cities" value="New Delhi, India">
-                                <datalist id="preset-cities">
-                                    <option value="New Delhi, India">
-                                    <option value="Mumbai, India">
-                                    <option value="Varanasi, India">
-                                    <option value="London, UK">
-                                    <option value="New York, USA">
-                                    <option value="San Francisco, USA">
-                                    <option value="Dubai, UAE">
-                                    <option value="Sydney, Australia">
-                                </datalist>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label data-i18n="labelPlace">जन्म स्थान / नगर (100,000+ वैश्विक शहरों की खोज)</label>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="text" id="input-place" class="form-control" placeholder="उदा. Jaipur, Patna, Delhi, London..." value="New Delhi, India" onkeyup="searchCityDynamic(this.value)">
+                                    <button type="button" class="btn-primary" onclick="detectUserGPS()" style="white-space:nowrap; padding:8px 12px; background:rgba(99, 102, 241, 0.3);">
+                                        📍 मेरी लोकेशन (GPS)
+                                    </button>
+                                </div>
+                                <div id="city-suggestions-box" class="suggestions-dropdown"></div>
                             </div>
                             <div class="form-group">
                                 <label data-i18n="labelLat">अक्षांश (Latitude)</label>
@@ -176,10 +230,13 @@
                             </div>
                         </div>
 
-                        <div style="margin-top: 24px; text-align: right;">
+                        <div style="margin-top: 24px; display:flex; justify-content:space-between; align-items:center;">
+                            <button type="button" class="btn-primary" onclick="shareKundliWhatsApp()" style="background:#25D366; color:white;">
+                                📲 WhatsApp पर शेयर करें
+                            </button>
                             <button type="submit" class="btn-primary">
                                 <span>✨</span>
-                                <span data-i18n="btnCalculate">कुंडली तैयार करें</span>
+                                <span data-i18n="btnCalculate">सटीक कुंडली तैयार करें</span>
                             </button>
                         </div>
                     </form>
@@ -310,11 +367,11 @@
                         <h3 style="color:var(--text-gold);">⏱️ प्लान 1: प्रति मिनट रीचार्ज</h3>
                         <div class="rate-badge">₹100 / मिनट</div>
                         <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-top:8px;">
-                            जितना उपयोग करें, केवल उसी का भुगतान करें। प्रति मिनट ₹100 की दर से त्वरित रीचार्ज।
+                            जितना उपयोग करें, केवल उसी का भुगतान करें। UPI/QR Code द्वारा त्वरित रीचार्ज।
                         </p>
-                        <button class="btn-primary" onclick="buyMinuteRecharge()" style="width:100%; justify-content:center; margin-top:16px;">
+                        <button class="btn-primary" onclick="triggerRazorpayPayment(100, 'minute_100')" style="width:100%; justify-content:center; margin-top:16px;">
                             <span>⚡</span>
-                            <span>₹100 (1 मिनट) रीचार्ज करें</span>
+                            <span>₹100 (UPI / QR / Razorpay) रीचार्ज करें</span>
                         </button>
                     </div>
 
@@ -324,9 +381,9 @@
                         <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-top:8px;">
                             पूरे 24 घंटे के लिए असीमित वेद, पुराण और ज्योतिष AI चैट का एक्सेस पाएँ।
                         </p>
-                        <button class="btn-primary" onclick="buyDayPass()" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color:white; width: 100%; justify-content: center; margin-top:16px;">
+                        <button class="btn-primary" onclick="triggerRazorpayPayment(3000, 'day_pass')" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color:white; width: 100%; justify-content: center; margin-top:16px;">
                             <span>👑</span>
-                            <span>₹3000 (1-दिन पास) खरीदें</span>
+                            <span>₹3000 (UPI / QR / Card) पास खरीदें</span>
                         </button>
                     </div>
                 </div>
@@ -334,23 +391,23 @@
         </main>
     </div>
 
-    <!-- 1-Minute Expired Paywall Modal (Clean Official Plans) -->
+    <!-- 1-Minute Expired Paywall Modal (Clean Official Plans with Razorpay Integration) -->
     <div class="modal-overlay" id="paywall-modal">
         <div class="modal-card">
             <div style="font-size: 3rem; margin-bottom: 8px;">🛑</div>
             <h2 class="modal-title">1 मिनट का मुफ़्त परीक्षण समाप्त!</h2>
             <p style="color:var(--text-muted); line-height: 1.6;">
-                आपका 1 मिनट (60 सेकंड) का निःशुल्क परीक्षण समाप्त हो गया है। आगे वेद, पुराण एवं ज्योतिष चैट जारी रखने के लिए प्लान चुनें (AI क्रेडिट सीमा: 30 प्रश्न/घंटा):
+                आपका 1 मिनट (60 सेकंड) का निःशुल्क परीक्षण समाप्त हो गया है। आगे वेद, पुराण एवं ज्योतिष चैट जारी रखने के लिए UPI या कार्ड द्वारा प्लान चुनें:
             </p>
 
             <div style="display:flex; flex-direction:column; gap:14px; margin-top:20px;">
-                <button class="btn-primary" onclick="buyMinuteRecharge()" style="justify-content:center;">
+                <button class="btn-primary" onclick="triggerRazorpayPayment(100, 'minute_100')" style="justify-content:center;">
                     <span>⏱️</span>
-                    <span>प्ला 1: ₹100 से 1 मिनट रीचार्ज करें</span>
+                    <span>प्ला 1: ₹100 (1 मिनट) UPI रीचार्ज करें</span>
                 </button>
-                <button class="btn-primary" onclick="buyDayPass()" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color:white; justify-content:center;">
+                <button class="btn-primary" onclick="triggerRazorpayPayment(3000, 'day_pass')" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color:white; justify-content:center;">
                     <span>☀️</span>
-                    <span>प्ला 2: ₹3000 से 1-दिन का अनलिमिटेड पास लें</span>
+                    <span>प्ला 2: ₹3000 (1-दिन) पास खरीदें</span>
                 </button>
             </div>
         </div>

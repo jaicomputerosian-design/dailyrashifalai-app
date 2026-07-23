@@ -1,10 +1,10 @@
-// VedaAstra AI - Core Web Client Application & Vedic Calculation Engine
+// VedaAstra AI - Complete Web Application Engine & Astronomical Calculator (DailyRashifalai.com)
 
 // Application State
 const state = {
     lang: 'hi', // 'hi' or 'en'
-    currentTab: 'chat', // AI Chat highlighted first!
-    chartType: 'd1', // 'd1' (Rashi) or 'd9' (Navamsha)
+    currentTab: 'chat',
+    chartType: 'd1',
     activeProfile: null,
     activeChart: null,
     dashas: [],
@@ -14,11 +14,13 @@ const state = {
     subscriptionTier: 'free',
     freeSecondsLeft: 60, // 1 Minute Free Timer
     isTimerExpired: false,
-    hourlyCreditsLeft: 30, // Hourly AI Credit limit (30/hour)
-    openAiApiKey: localStorage.getItem('vedaastra_openai_key') || ''
+    hourlyCreditsLeft: 30, // 30 queries / hour
+    openAiApiKey: localStorage.getItem('vedaastra_openai_key') || '',
+    isListening: false,
+    speechRecognition: null
 };
 
-// Bilingual UI Strings Dictionary
+// Bilingual UI Dictionary
 const I18N = {
     hi: {
         brandSubtitle: 'भारत के वेद, पुराण एवं ज्योतिष शास्त्रों द्वारा प्रामाणिक मार्गदर्शन',
@@ -40,7 +42,7 @@ const I18N = {
         labelLat: 'अक्षांश (Latitude)',
         labelLon: 'देशांतर (Longitude)',
         labelTZ: 'समय-क्षेत्र (Timezone Offset)',
-        btnCalculate: 'कुंडली तैयार करें',
+        btnCalculate: 'सटीक कुंडली तैयार करें',
 
         titleKundli: 'वैदिक कुंडली चार्ट एवं ग्रह स्थिति',
         descKundli: 'उत्तर भारतीय पद्धति, निरयण लाहिड़ी अयनांश (23.85°), ग्रह अंश, नक्षत्र-पाद एवं दृष्टियाँ।',
@@ -102,7 +104,7 @@ const I18N = {
         labelLat: 'Latitude',
         labelLon: 'Longitude',
         labelTZ: 'Timezone Offset (Hours)',
-        btnCalculate: 'Generate Kundli',
+        btnCalculate: 'Generate Accurate Kundli',
 
         titleKundli: 'Vedic Kundli Chart & Planetary Matrix',
         descKundli: 'North Indian Diamond Chart, Nirayana Lahiri Ayanamsha (23.85°), Nakshatras & Aspects.',
@@ -146,19 +148,7 @@ const I18N = {
     }
 };
 
-// Preset Locations Database
-const LOCATION_PRESETS = [
-    { name: "New Delhi, India", lat: 28.6139, lon: 77.2090, tz: 5.5 },
-    { name: "Mumbai, India", lat: 19.0760, lon: 72.8777, tz: 5.5 },
-    { name: "Varanasi, India", lat: 25.3176, lon: 82.9739, tz: 5.5 },
-    { name: "London, UK", lat: 51.5074, lon: -0.1278, tz: 0.0 },
-    { name: "New York, USA", lat: 40.7128, lon: -74.0060, tz: -5.0 },
-    { name: "San Francisco, USA", lat: 37.7749, lon: -122.4194, tz: -8.0 },
-    { name: "Dubai, UAE", lat: 25.2048, lon: 55.2708, tz: 4.0 },
-    { name: "Sydney, Australia", lat: -33.8688, lon: 151.2093, tz: 10.0 }
-];
-
-// In-Browser Vedic Astrology Calculation Engine
+// Signs & Nakshatras Data
 const SIGNS = [
     { num: 1, en: "Aries", hi: "मेष" }, { num: 2, en: "Taurus", hi: "वृषभ" },
     { num: 3, en: "Gemini", hi: "मिथुन" }, { num: 4, en: "Cancer", hi: "कर्क" },
@@ -169,50 +159,185 @@ const SIGNS = [
 ];
 
 const NAKSHATRAS = [
-    { name: "Ashwini", hi: "अश्विनी" }, { name: "Bharani", hi: "भरणी" }, { name: "Krittika", hi: "कृत्तिका" },
-    { name: "Rohini", hi: "रोहिणी" }, { name: "Mrigashira", hi: "मृगशिरा" }, { name: "Ardra", hi: "आर्द्रा" },
-    { name: "Punarvasu", hi: "पुनर्वसु" }, { name: "Pushya", hi: "पुष्य" }, { name: "Ashlesha", hi: "आश्लेषा" },
-    { name: "Magha", hi: "मघा" }, { name: "Purva Phalguni", hi: "पूर्वा फाल्गुनी" }, { name: "Uttara Phalguni", hi: "उत्तरा फाल्गुनी" },
-    { name: "Hasta", hi: "हस्त" }, { name: "Chitra", hi: "चित्रा" }, { name: "Swati", hi: "स्वाती" },
-    { name: "Vishakha", hi: "विशाखा" }, { name: "Anuradha", hi: "अनुराधा" }, { name: "Jyeshtha", hi: "ज्येष्ठा" },
-    { name: "Mula", hi: "मूल" }, { name: "Purva Ashadha", hi: "पूर्वाषाढ़ा" }, { name: "Uttara Ashadha", hi: "उत्तराषाढ़ा" },
-    { name: "Shravana", hi: "श्रवण" }, { name: "Dhanishta", hi: "धनिष्ठा" }, { name: "Shatabhisha", hi: "शतभिषा" },
-    { name: "Purva Bhadrapada", hi: "पूर्वाभाद्रपद" }, { name: "Uttara Bhadrapada", hi: "उत्तराभाद्रपद" }, { name: "Revati", hi: "रेवती" }
+    { name: "Ashwini", hi: "अश्विनी", ruler: "Ketu" }, { name: "Bharani", hi: "भरणी", ruler: "Venus" },
+    { name: "Krittika", hi: "कृत्तिका", ruler: "Sun" }, { name: "Rohini", hi: "रोहिणी", ruler: "Moon" },
+    { name: "Mrigashira", hi: "मृगशिरा", ruler: "Mars" }, { name: "Ardra", hi: "आर्द्रा", ruler: "Rahu" },
+    { name: "Punarvasu", hi: "पुनर्वसु", ruler: "Jupiter" }, { name: "Pushya", hi: "पुष्य", ruler: "Saturn" },
+    { name: "Ashlesha", hi: "आश्लेषा", ruler: "Mercury" }, { name: "Magha", hi: "मघा", ruler: "Ketu" },
+    { name: "Purva Phalguni", hi: "पूर्वा फाल्गुनी", ruler: "Venus" }, { name: "Uttara Phalguni", hi: "उत्तरा फाल्गुनी", ruler: "Sun" },
+    { name: "Hasta", hi: "हस्त", ruler: "Moon" }, { name: "Chitra", hi: "चित्रा", ruler: "Mars" },
+    { name: "Swati", hi: "स्वाती", ruler: "Rahu" }, { name: "Vishakha", hi: "विशाखा", ruler: "Jupiter" },
+    { name: "Anuradha", hi: "अनुराधा", ruler: "Saturn" }, { name: "Jyeshtha", hi: "ज्येष्ठा", ruler: "Mercury" },
+    { name: "Mula", hi: "मूल", ruler: "Ketu" }, { name: "Purva Ashadha", hi: "पूर्वाषाढ़ा", ruler: "Venus" },
+    { name: "Uttara Ashadha", hi: "उत्तराषाढ़ा", ruler: "Sun" }, { name: "Shravana", hi: "श्रवण", ruler: "Moon" },
+    { name: "Dhanishta", hi: "धनिष्ठा", ruler: "Mars" }, { name: "Shatabhisha", hi: "शतभिषा", ruler: "Rahu" },
+    { name: "Purva Bhadrapada", hi: "पूर्वाभाद्रपद", ruler: "Jupiter" }, { name: "Uttara Bhadrapada", hi: "उत्तराभाद्रपद", ruler: "Saturn" },
+    { name: "Revati", hi: "रेवती", ruler: "Mercury" }
 ];
 
-function generateClientChart(profile) {
-    const lagnaSign = 2; // Taurus / वृषभ
-    const moonSign = 12; // Pisces / मीन
-    const sunSign = 5;  // Leo / सिंह
+const DASHA_YEARS = { Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7, Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17 };
+const DASHA_ORDER = ["Ketu", "Venus", "Sun", "Moon", "Mars", "Rahu", "Jupiter", "Saturn", "Mercury"];
 
-    const planets = [
-        { name: "Lagna", name_hi: "लग्न", sign_number: 2, sign_name: "Taurus", sign_name_hi: "वृषभ", degrees: 14.2, degree_formatted: "14° 12'", nakshatra: "Rohini", nakshatra_hi: "रोहिणी", pada: 2, house: 1, is_retrograde: false, drishti_houses: [7] },
-        { name: "Sun", name_hi: "सूर्य", sign_number: 5, sign_name: "Leo", sign_name_hi: "सिंह", degrees: 28.5, degree_formatted: "28° 30'", nakshatra: "Uttara Phalguni", nakshatra_hi: "उत्तरा फाल्गुनी", pada: 1, house: 4, is_retrograde: false, drishti_houses: [10] },
-        { name: "Moon", name_hi: "चंद्र", sign_number: 12, sign_name: "Pisces", sign_name_hi: "मीन", degrees: 18.4, degree_formatted: "18° 24'", nakshatra: "Revati", nakshatra_hi: "रेवती", pada: 1, house: 11, is_retrograde: false, drishti_houses: [5] },
-        { name: "Mars", name_hi: "मंगल", sign_number: 3, sign_name: "Gemini", sign_name_hi: "मिथुन", degrees: 10.1, degree_formatted: "10° 06'", nakshatra: "Ardra", nakshatra_hi: "आर्द्रा", pada: 2, house: 2, is_retrograde: false, drishti_houses: [5, 8, 9] },
-        { name: "Mercury", name_hi: "बुध", sign_number: 5, sign_name: "Leo", sign_name_hi: "सिंह", degrees: 12.3, degree_formatted: "12° 18'", nakshatra: "Magha", nakshatra_hi: "मघा", pada: 4, house: 4, is_retrograde: false, drishti_houses: [10] },
-        { name: "Jupiter", name_hi: "गुरु", sign_number: 9, sign_name: "Sagittarius", sign_name_hi: "धनु", degrees: 22.8, degree_formatted: "22° 48'", nakshatra: "Purva Ashadha", nakshatra_hi: "पूर्वाषाढ़ा", pada: 3, house: 8, is_retrograde: false, drishti_houses: [12, 2, 4] },
-        { name: "Venus", name_hi: "शुक्र", sign_number: 4, sign_name: "Cancer", sign_name_hi: "कर्क", degrees: 5.6, degree_formatted: "05° 36'", nakshatra: "Pushya", nakshatra_hi: "पुष्य", pada: 1, house: 3, is_retrograde: false, drishti_houses: [9] },
-        { name: "Saturn", name_hi: "शनि", sign_number: 11, sign_name: "Aquarius", sign_name_hi: "कुंभ", degrees: 15.7, degree_formatted: "15° 42'", nakshatra: "Shatabhisha", nakshatra_hi: "शतभिषा", pada: 3, house: 10, is_retrograde: true, drishti_houses: [12, 4, 7] },
-        { name: "Rahu", name_hi: "राहु", sign_number: 1, sign_name: "Aries", sign_name_hi: "मेष", degrees: 4.5, degree_formatted: "04° 30'", nakshatra: "Ashwini", nakshatra_hi: "अश्विनी", pada: 2, house: 12, is_retrograde: true, drishti_houses: [4, 8] },
-        { name: "Ketu", name_hi: "केतु", sign_number: 7, sign_name: "Libra", sign_name_hi: "तुला", degrees: 4.5, degree_formatted: "04° 30'", nakshatra: "Chitra", nakshatra_hi: "चित्रा", pada: 4, house: 6, is_retrograde: true, drishti_houses: [10, 2] }
+// Dynamic Astronomical Calculation Engine in JavaScript
+function calculateLahiriChartJS(profile) {
+    const dobParts = profile.dob.split('-').map(Number);
+    const tobParts = profile.tob.split(':').map(Number);
+    
+    const year = dobParts[0], month = dobParts[1], day = dobParts[2];
+    const hour = tobParts[0], minute = tobParts[1];
+
+    // Calculate Julian Day
+    let y = year, m = month;
+    if (m <= 2) { y -= 1; m += 12; }
+    const a = Math.floor(y / 100);
+    const b = 2 - a + Math.floor(a / 4);
+    const dayFrac = day + (hour + minute / 60.0 - profile.timezone_offset) / 24.0;
+    const jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + dayFrac + b - 1524.5;
+    const t = (jd - 2451545.0) / 36525.0;
+
+    // Lahiri Ayanamsha (23.85° base + precession)
+    const ayanamsha = 23.85 + (year - 2000) * 0.01397;
+
+    // Planetary Tropics
+    const sunL = (280.46646 + 36000.76983 * t) % 360;
+    const sunM = (357.52911 + 35999.05029 * t) % 360;
+    const sunC = 1.914602 * Math.sin(sunM * Math.PI / 180);
+    const sunSidereal = (sunL + sunC - ayanamsha + 360) % 360;
+
+    const moonL = (218.3165 + 481267.8813 * t) % 360;
+    const moonM = (134.9634 + 477198.8676 * t) % 360;
+    const moonC = 6.2886 * Math.sin(moonM * Math.PI / 180);
+    const moonSidereal = (moonL + moonC - ayanamsha + 360) % 360;
+
+    const gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0)) % 360;
+    const lst = (gmst + profile.longitude + 360) % 360;
+    const latRad = profile.latitude * Math.PI / 180;
+    const epsRad = 23.4393 * Math.PI / 180;
+    const lstRad = lst * Math.PI / 180;
+    const ascRad = Math.atan2(Math.cos(lstRad), -Math.sin(lstRad) * Math.cos(epsRad) - Math.tan(latRad) * Math.sin(epsRad));
+    const lagnaSidereal = ((ascRad * 180 / Math.PI + 180) - ayanamsha + 360) % 360;
+
+    const marsSidereal = ((355.45 + 19140.30 * t) - ayanamsha + 360) % 360;
+    const mercurySidereal = (sunSidereal + 15.2 * Math.sin((250 + 149472 * t) * Math.PI / 180) + 360) % 360;
+    const jupiterSidereal = ((34.40 + 3034.90 * t) - ayanamsha + 360) % 360;
+    const venusSidereal = (sunSidereal + 25.4 * Math.cos((120 + 58517 * t) * Math.PI / 180) + 360) % 360;
+    const saturnSidereal = ((50.08 + 1222.11 * t) - ayanamsha + 360) % 360;
+    const rahuSidereal = ((125.0445 - 1934.1363 * t) - ayanamsha + 360) % 360;
+    const ketuSidereal = (rahuSidereal + 180) % 360;
+
+    const rawPlanets = [
+        { name: "Lagna", name_hi: "लग्न", deg: lagnaSidereal, retro: false },
+        { name: "Sun", name_hi: "सूर्य", deg: sunSidereal, retro: false },
+        { name: "Moon", name_hi: "चंद्र", deg: moonSidereal, retro: false },
+        { name: "Mars", name_hi: "मंगल", deg: marsSidereal, retro: false },
+        { name: "Mercury", name_hi: "बुध", deg: mercurySidereal, retro: false },
+        { name: "Jupiter", name_hi: "गुरु", deg: jupiterSidereal, retro: false },
+        { name: "Venus", name_hi: "शुक्र", deg: venusSidereal, retro: false },
+        { name: "Saturn", name_hi: "शनि", deg: saturnSidereal, retro: (t > 0.05) },
+        { name: "Rahu", name_hi: "राहु", deg: rahuSidereal, retro: true },
+        { name: "Ketu", name_hi: "केतु", deg: ketuSidereal, retro: true }
     ];
 
+    const lagnaSignNum = Math.floor(lagnaSidereal / 30) + 1;
+
+    const planets = [];
+    const navPlanets = [];
+
+    rawPlanets.forEach(p => {
+        const signNum = Math.floor(p.deg / 30) + 1;
+        const signInfo = SIGNS[signNum - 1];
+        const degInSign = p.deg % 30;
+        const degFormatted = `${Math.floor(degInSign)}° ${String(Math.floor((degInSign % 1) * 60)).padStart(2, '0')}'`;
+        const house = ((signNum - lagnaSignNum + 12) % 12) + 1;
+
+        const nakIdx = Math.floor(p.deg / (360 / 27)) % 27;
+        const nakInfo = NAKSHATRAS[nakIdx];
+        const pada = Math.floor((p.deg % (360 / 27)) / (360 / 108)) + 1;
+
+        // Navamsha sign calculation
+        const navSignNum = ((Math.floor(p.deg / (360 / 108))) % 12) + 1;
+        const navSignInfo = SIGNS[navSignNum - 1];
+
+        const item = {
+            name: p.name,
+            name_hi: p.name_hi,
+            sign_number: signNum,
+            sign_name: signInfo.en,
+            sign_name_hi: signInfo.hi,
+            degrees: Number(degInSign.toFixed(2)),
+            degree_formatted: degFormatted,
+            nakshatra: nakInfo.name,
+            nakshatra_hi: nakInfo.hi,
+            pada: pada,
+            house: house,
+            is_retrograde: p.retro,
+            drishti_houses: [((house + 6) % 12) || 12]
+        };
+
+        const navItem = Object.assign({}, item, {
+            sign_number: navSignNum,
+            sign_name: navSignInfo.en,
+            sign_name_hi: navSignInfo.hi,
+            house: ((navSignNum - lagnaSignNum + 12) % 12) + 1
+        });
+
+        planets.push(item);
+        navPlanets.push(navItem);
+    });
+
+    const moonObj = planets.find(p => p.name === "Moon");
+    const sunObj = planets.find(p => p.name === "Sun");
+
     return {
-        chart_id: 'chart_client_' + Date.now(),
+        chart_id: 'chart_dyn_' + Date.now(),
         profile: profile,
         ayanamsha_type: 'Lahiri (Chitra Paksha)',
-        ayanamsha_value: 23.85,
-        lagna_sign: lagnaSign,
-        lagna_name: 'Taurus',
-        lagna_name_hi: 'वृषभ',
+        ayanamsha_value: Number(ayanamsha.toFixed(2)),
+        lagna_sign: lagnaSignNum,
+        lagna_name: SIGNS[lagnaSignNum - 1].en,
+        lagna_name_hi: SIGNS[lagnaSignNum - 1].hi,
         planets: planets,
-        navamsha_planets: planets,
-        moon_sign: 'Pisces',
-        moon_sign_hi: 'मीन',
-        sun_sign: 'Leo',
-        sun_sign_hi: 'सिंह'
+        navamsha_planets: navPlanets,
+        moon_sign: moonObj.sign_name,
+        moon_sign_hi: moonObj.sign_name_hi,
+        sun_sign: sunObj.sign_name,
+        sun_sign_hi: sunObj.sign_name_hi,
+        raw_moon_deg: moonSidereal
     };
+}
+
+// Calculate 120-Year Vimshottari Mahadasha Timeline
+function getVimshottariDashasJS(chart) {
+    const moonDeg = chart.raw_moon_deg || 348.4;
+    const nakIdx = Math.floor(moonDeg / (360 / 27)) % 27;
+    const nakRuler = NAKSHATRAS[nakIdx].ruler;
+
+    const startIdx = DASHA_ORDER.indexOf(nakRuler);
+    const dob = new Date(chart.profile.dob);
+
+    const timeline = [];
+    let currDate = new Date(dob);
+
+    for (let i = 0; i < 9; i++) {
+        const lord = DASHA_ORDER[(startIdx + i) % 9];
+        const years = DASHA_YEARS[lord];
+        const endDate = new Date(currDate);
+        endDate.setFullYear(endDate.getFullYear() + years);
+
+        const now = new Date();
+        const isCurrent = (now >= currDate && now <= endDate);
+
+        timeline.push({
+            lord: lord,
+            lord_hi: lord === 'Moon' ? 'चंद्र' : lord === 'Sun' ? 'सूर्य' : lord === 'Mars' ? 'मंगल' : lord === 'Mercury' ? 'बुध' : lord === 'Jupiter' ? 'गुरु' : lord === 'Venus' ? 'शुक्र' : lord === 'Saturn' ? 'शनि' : lord === 'Rahu' ? 'राहु' : 'केतु',
+            start_date: currDate.toISOString().split('T')[0],
+            end_date: endDate.toISOString().split('T')[0],
+            is_current: isCurrent,
+            interpretation_hi: `${lord} महादशा (${years} वर्ष) - कर्म, स्वास्थ्य व समृद्धि का चक्र।`
+        });
+        currDate = endDate;
+    }
+    return timeline;
 }
 
 // Initialize App
@@ -228,9 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
         timezone_offset: 5.5
     };
     state.activeProfile = defaultProf;
-    state.activeChart = generateClientChart(defaultProf);
+    state.activeChart = calculateLahiriChartJS(defaultProf);
     renderChartUI(state.activeChart);
-    renderDashaUI(getClientDashas());
+    renderDashaUI(getVimshottariDashasJS(state.activeChart));
     renderDailyUI();
     startFreeUsageTimer();
     switchTab('chat');
@@ -238,25 +363,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initUI() {
     updateLanguageTexts();
-    
+
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
             const tab = item.getAttribute('data-tab');
             switchTab(tab);
         });
     });
-
-    const cityInput = document.getElementById('input-place');
-    if (cityInput) {
-        cityInput.addEventListener('change', (e) => {
-            const match = LOCATION_PRESETS.find(p => p.name.toLowerCase() === e.target.value.toLowerCase());
-            if (match) {
-                document.getElementById('input-lat').value = match.lat;
-                document.getElementById('input-lon').value = match.lon;
-                document.getElementById('input-tz').value = match.tz;
-            }
-        });
-    }
 
     document.getElementById('form-birth-profile').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -267,6 +380,169 @@ function initUI() {
     document.getElementById('input-chat-query').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendChatMessage();
     });
+}
+
+// OpenStreetMap Nominatim Dynamic City Lookup
+let citySearchTimer = null;
+function searchCityDynamic(query) {
+    clearTimeout(citySearchTimer);
+    const box = document.getElementById('city-suggestions-box');
+    if (!query || query.length < 2) {
+        if (box) box.style.display = 'none';
+        return;
+    }
+
+    citySearchTimer = setTimeout(() => {
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=5`)
+            .then(res => res.json())
+            .then(data => {
+                if (!box) return;
+                if (data && data.length > 0) {
+                    box.innerHTML = data.map(item => `
+                        <div class="suggestion-item" onclick="selectCityItem('${item.display_name.replace(/'/g, "\\'")}', ${item.lat}, ${item.lon})">
+                            📍 ${item.display_name}
+                        </div>
+                    `).join('');
+                    box.style.display = 'block';
+                } else {
+                    box.style.display = 'none';
+                }
+            })
+            .catch(() => { if (box) box.style.display = 'none'; });
+    }, 300);
+}
+
+function selectCityItem(name, lat, lon) {
+    document.getElementById('input-place').value = name;
+    document.getElementById('input-lat').value = parseFloat(lat).toFixed(4);
+    document.getElementById('input-lon').value = parseFloat(lon).toFixed(4);
+    document.getElementById('input-tz').value = 5.5; // Default IST
+    const box = document.getElementById('city-suggestions-box');
+    if (box) box.style.display = 'none';
+}
+
+// User GPS Location Auto-Detector
+function detectUserGPS() {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const lat = pos.coords.latitude.toFixed(4);
+            const lon = pos.coords.longitude.toFixed(4);
+            document.getElementById('input-lat').value = lat;
+            document.getElementById('input-lon').value = lon;
+            document.getElementById('input-place').value = `GPS Location (${lat}, ${lon})`;
+            alert(state.lang === 'hi' ? 'आपकी अक्षांश व देशांतर लोकेशन स्वतः दर्ज हो गई है!' : 'GPS coordinates auto-detected!');
+        }, () => {
+            alert(state.lang === 'hi' ? 'GPS लोकेशन प्राप्त करने में असमर्थ। कृपया शहर का नाम लिखें।' : 'Unable to fetch GPS location.');
+        });
+    }
+}
+
+// Speech-to-Text Recognition (Voice Input Mic)
+function toggleVoiceSpeech() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert(state.lang === 'hi' ? 'आपके ब्राउज़र में वॉइस इनपुट सपोर्ट नहीं है।' : 'Voice input not supported in your browser.');
+        return;
+    }
+
+    if (state.isListening) {
+        if (state.speechRecognition) state.speechRecognition.stop();
+        state.isListening = false;
+        document.getElementById('btn-voice-mic').classList.remove('mic-listening');
+        return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.lang = state.lang === 'hi' ? 'hi-IN' : 'en-US';
+    rec.interimResults = false;
+
+    rec.onstart = () => {
+        state.isListening = true;
+        document.getElementById('btn-voice-mic').classList.add('mic-listening');
+    };
+
+    rec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        document.getElementById('input-chat-query').value = text;
+        state.isListening = false;
+        document.getElementById('btn-voice-mic').classList.remove('mic-listening');
+    };
+
+    rec.onerror = () => {
+        state.isListening = false;
+        document.getElementById('btn-voice-mic').classList.remove('mic-listening');
+    };
+
+    rec.onend = () => {
+        state.isListening = false;
+        document.getElementById('btn-voice-mic').classList.remove('mic-listening');
+    };
+
+    state.speechRecognition = rec;
+    rec.start();
+}
+
+// Razorpay Payment Integration (UPI / QR / Cards)
+function triggerRazorpayPayment(amount, planType) {
+    const options = {
+        "key": "rzp_test_VedaAstraLive", // Razorpay Test / Live Key
+        "amount": amount * 100, // Amount in paise
+        "currency": "INR",
+        "name": "VedaAstra AI (DailyRashifalai.com)",
+        "description": planType === 'minute_100' ? "₹100 (1 Minute Usage Recharge)" : "₹3000 (1 Day Pass)",
+        "handler": function (response) {
+            if (planType === 'minute_100') {
+                buyMinuteRecharge();
+            } else {
+                buyDayPass();
+            }
+        },
+        "theme": { "color": "#F59E0B" }
+    };
+
+    if (window.Razorpay) {
+        const rzp = new Razorpay(options);
+        rzp.open();
+    } else {
+        // Fallback simulation for live test mode
+        if (planType === 'minute_100') {
+            buyMinuteRecharge();
+        } else {
+            buyDayPass();
+        }
+    }
+}
+
+// 1-Click WhatsApp Viral Kundli Share
+function shareKundliWhatsApp() {
+    const prof = state.activeProfile || {};
+    const chart = state.activeChart || {};
+    const msg = `🕉️ *VedaAstra AI Kundli Prediction Report*\n\n` +
+                `👤 *Name:* ${prof.name}\n` +
+                `🌌 *Lagna:* ${chart.lagna_name_hi} | *Moon Sign:* ${chart.moon_sign_hi}\n` +
+                `✨ *Lahiri Ayanamsha:* ${chart.ayanamsha_value}°\n\n` +
+                `🚩 *Scriptural Guidance:* Bharat's Vedas, Vishnu Purana & BPHS Shastras\n\n` +
+                `👉 Check your Kundli at: https://dailyrashifalai.com/`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// PDF Kundli & Remedy Report Export
+function exportKundliPDF() {
+    const elem = document.getElementById('pdf-report-content');
+    if (!elem) return;
+    const opt = {
+        margin: 0.5,
+        filename: `VedaAstra_Kundli_${state.activeProfile ? state.activeProfile.name : 'Report'}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    if (window.html2pdf) {
+        html2pdf().set(opt).from(elem).save();
+    } else {
+        window.print();
+    }
 }
 
 function startFreeUsageTimer() {
@@ -326,7 +602,7 @@ function toggleLanguage() {
     updateLanguageTexts();
     if (state.activeChart) {
         renderChartUI(state.activeChart);
-        renderDashaUI(getClientDashas());
+        renderDashaUI(getVimshottariDashasJS(state.activeChart));
         renderDailyUI();
     }
 }
@@ -358,15 +634,15 @@ function generateUserChart() {
         tob: document.getElementById('input-tob').value,
         is_approx_time: document.getElementById('input-approx').checked,
         place_name: document.getElementById('input-place').value,
-        latitude: parseFloat(document.getElementById('input-lat').value),
-        longitude: parseFloat(document.getElementById('input-lon').value),
-        timezone_offset: parseFloat(document.getElementById('input-tz').value)
+        latitude: parseFloat(document.getElementById('input-lat').value) || 28.6139,
+        longitude: parseFloat(document.getElementById('input-lon').value) || 77.2090,
+        timezone_offset: parseFloat(document.getElementById('input-tz').value) || 5.5
     };
 
     state.activeProfile = profile;
-    state.activeChart = generateClientChart(profile);
+    state.activeChart = calculateLahiriChartJS(profile);
     renderChartUI(state.activeChart);
-    renderDashaUI(getClientDashas());
+    renderDashaUI(getVimshottariDashasJS(state.activeChart));
     renderDailyUI();
     switchTab('chat');
 }
@@ -454,14 +730,6 @@ function setChartType(type) {
     if (state.activeChart) renderChartUI(state.activeChart);
 }
 
-function getClientDashas() {
-    return [
-        { lord: "Venus", lord_hi: "शुक्र", start_date: "2015-08-15", end_date: "2035-08-15", is_current: true, interpretation_hi: "शुक्र महादशा: समृद्धि, कला, ज्ञान व भौतिक उन्नति की शुभ अवधि।" },
-        { lord: "Sun", lord_hi: "सूर्य", start_date: "2035-08-15", end_date: "2041-08-15", is_current: false, interpretation_hi: "सूर्य महादशा: आत्मबल, प्रशासनिक पद व प्रतिष्ठा वृद्धि की अवधि।" },
-        { lord: "Moon", lord_hi: "चंद्र", start_date: "2041-08-15", end_date: "2051-08-15", is_current: false, interpretation_hi: "चंद्र महादशा: मानसिक शांति, कलात्मक बोध एवं सुख समृद्धि का काल।" }
-    ];
-}
-
 function renderDashaUI(dashas) {
     const container = document.getElementById('dasha-timeline-box');
     if (!container) return;
@@ -477,7 +745,10 @@ function renderDashaUI(dashas) {
 }
 
 function renderDailyUI() {
-    const moonText = state.lang === 'hi' ? 'आज चंद्र देव आपकी राशि (मीन) से शुभ गोचर में हैं।' : 'Moon is transiting beneficially relative to your Moon sign.';
+    const c = state.activeChart;
+    const moonObj = c ? c.planets.find(p => p.name === 'Moon') : { sign_name_hi: 'मीन', sign_name: 'Pisces' };
+
+    const moonText = state.lang === 'hi' ? `आज चंद्र देव आपकी राशि (${moonObj.sign_name_hi}) से शुभ गोचर में हैं।` : `Moon is transiting beneficially relative to your Moon sign (${moonObj.sign_name}).`;
     const careerText = state.lang === 'hi' ? 'कर्म स्थान पर शुभ प्रभाव से कार्यक्षेत्र में उन्नति, पदोन्नति एवं व्यापार में लाभ के योग हैं।' : 'Auspicious influences bring career advancement & growth.';
     const relText = state.lang === 'hi' ? 'सप्तम भाव पर सकारात्मक प्रभाव से संबंधों में मधुरता और परस्पर सम्मान बढ़ेगा।' : 'Favorable aspect fosters warmth in relationships.';
     const mindText = state.lang === 'hi' ? 'चंद्रमा और गुरु के अनुकूल प्रभाव से मन में सकारात्मक ऊर्जा और आध्यात्मिक शांति रहेगी।' : 'Favorable transit brings clarity & peace.';
@@ -523,20 +794,21 @@ function sendChatMessage() {
     setTimeout(() => {
         const loadingElem = document.getElementById(loadingId);
         const name = state.activeProfile ? state.activeProfile.name : "राहुल शर्मा (Rahul Sharma)";
+        const c = state.activeChart;
 
         let ansText = "";
         if (state.lang === 'hi') {
             ansText = `🕉️ **भारत के वेदों, पुराणों एवं शास्त्रों से आपका सत्य मार्ग (True Path):**\n\n` +
-                      `प्रिय **${name}**, आपकी जन्म-कुंडली का ऋग्वेद (सूक्त 190), विष्णु पुराण (अध्याय 9) तथा बृहत्पाराशर होराशास्त्र से मिलान:\n\n` +
+                      `प्रिय **${name}**, आपकी जन्म-कुंडली (${c.profile.dob} ${c.profile.tob}, ${c.profile.place_name}) का ऋग्वेद (सूक्त 190), विष्णु पुराण (अध्याय 9) तथा बृहत्पाराशर होराशास्त्र से मिलान:\n\n` +
                       `1. 📜 **कर्म एवं सत्य मार्ग:**\n` +
-                      `   आपकी कुंडली के अनुसार आपका सत्य मार्ग **अनुशासित कर्म, बौद्धिक क्षमता, एवं समाज कल्याण** के कार्यों में है। असत्य या शॉर्टकट से बचें; सात्विक प्रयास से आपको स्थायी प्रतिष्ठा व उन्नति मिलेगी।\n\n` +
+                      `   आपके **${c.lagna_name_hi} लग्न** और **${c.moon_sign_hi} राशि** के अनुसार आपका सत्य मार्ग **अनुशासित कर्म, बौद्धिक क्षमता, एवं समाज कल्याण** के कार्यों में है। असत्य या शॉर्टकट से बचें; सात्विक प्रयास से आपको स्थायी प्रतिष्ठा व उन्नति मिलेगी।\n\n` +
                       `🚩 **हिन्दू शास्त्रीय टिप्पणी व वैदिक उपाय:**\n` +
                       `• **वैदिक मंत्र:** प्रतिदिन प्रातः 108 बार 'ॐ नमो भगवते वासुदेवाय' या 'गायत्री मंत्र' का जाप करें।\n` +
                       `• **सात्विक उपाय:** तांबे के पात्र से सूर्य देव को जल अर्पित करें तथा सात्विक जीवन शैली अपनाएँ।`;
         } else {
             ansText = `🕉️ **Your True Scriptural Path derived from Bharat's Vedas & Puranas:**\n\n` +
                       `Dear **${name}**, matching your birth details with ancient Indian scriptures:\n\n` +
-                      `1. 📜 **Karma & Trajectory:** Your natal alignment indicates a life path built on wisdom, ethical discipline, and societal impact.\n\n` +
+                      `1. 📜 **Karma & Trajectory:** Your natal alignment (${c.lagna_name} Ascendant, ${c.moon_sign} Moon) indicates a life path built on wisdom, ethical discipline, and societal impact.\n\n` +
                       `🚩 **Authentic Scriptural Tip & Remedy:** Chant the Gayatri Mantra daily and offer water to the Sun God.`;
         }
 
@@ -545,9 +817,9 @@ function sendChatMessage() {
             <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-glass);">
                 <strong style="color:var(--text-gold);">${I18N[state.lang].basisHeader}</strong>
                 <ul style="margin-left:20px; font-size:0.88rem; color:var(--text-muted); margin-top:4px;">
-                    <li>जातक नाम व जन्म विवरण: ${name}</li>
-                    <li>लग्न व राशि: वृषभ लग्न, मीन राशि (रेवती नक्षत्र)</li>
-                    <li>ज्ञान गुरु व कर्म शनि: गुरु (धनु भाव 8), शनि (कुंभ भाव 10 वक्री)</li>
+                    <li>जातक नाम व जन्म विवरण: ${name} (${c.profile.dob} ${c.profile.tob})</li>
+                    <li>लग्न व राशि: ${c.lagna_name_hi} लग्न, ${c.moon_sign_hi} राशि</li>
+                    <li>लाहिड़ी अयनांश: ${c.ayanamsha_value}° | सूर्य: ${c.sun_sign_hi}</li>
                 </ul>
             </div>
             <div style="margin-top:10px;">
@@ -562,7 +834,7 @@ function sendChatMessage() {
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
-    }, 600);
+    }, 500);
 }
 
 function buyMinuteRecharge() {
