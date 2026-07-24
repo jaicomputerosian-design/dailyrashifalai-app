@@ -918,10 +918,18 @@ function selectAiGuru(guruName, specialty) {
     chatBox.innerHTML += `
         <div class="chat-message ai" style="border-left:4px solid var(--accent-gold); background:rgba(245,158,11,0.08);">
             <strong>प्रणाम! 🕉️ मैं ${guruName} हूँ (${specialty} विशेषज्ञ)।</strong><br>
-            आपके जीवन, करियर, धन या विवाह से जुड़ी किसी भी समस्या के समाधान के लिए मैं भारत के सनातन ग्रंथों व पराशर शास्त्र के अनुसार आपका मार्गदर्शन करने हेतु तत्पर हूँ। अपना प्रश्न नीचे लिखें...
+            आपके जीवन, करियर, धन या विवाह से जुड़ी किसी भी समस्या के समाधान के लिए मैं भारत के सनातन ग्रंथों व पराशर शास्त्र के अनुसार आपका मार्गदर्शन करने हेतु तत्पर हूँ।<br><br>
+            <strong style="color:var(--text-gold);">👇 नीचे चैट बॉक्स में अपना नाम, जन्म विवरण या प्रश्न लिखें और 🚀 बटन दबाएँ:</strong>
         </div>
     `;
     chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Auto-focus the chat input box so user can type immediately
+    const inputEl = document.getElementById('input-chat-query');
+    if (inputEl) {
+        inputEl.focus();
+        inputEl.placeholder = `${guruName} से अपना प्रश्न पूछें...`;
+    }
 }
 window.addEventListener('DOMContentLoaded', () => {
     const search = window.location.search.toLowerCase();
@@ -929,6 +937,17 @@ window.addEventListener('DOMContentLoaded', () => {
     if (search.includes('admin') || search.includes('ailogin') || hash.includes('ailogin')) {
         document.getElementById('nav-item-admin').style.display = 'flex';
         openAdminLoginModal();
+    }
+
+    // Auto-restore logout button if user or admin was already logged in
+    if (adminState.isLoggedIn || userAuthState.isLoggedIn) {
+        document.getElementById('btn-logout-auth').style.display = 'inline-flex';
+    }
+    if (userAuthState.isLoggedIn && userAuthState.mobile) {
+        document.getElementById('btn-user-auth').innerText = `👤 ${userAuthState.mobile}`;
+    }
+    if (adminState.isLoggedIn) {
+        document.getElementById('nav-item-admin').style.display = 'flex';
     }
 });
 
@@ -1063,8 +1082,8 @@ function verifyAdminEmailOtp() {
         adminState.isLoggedIn = true;
         localStorage.setItem('vedaastra_admin_logged_in', 'true');
         closeLegalModal('modal-admin-login');
-        document.getElementById('btn-admin-auth').innerText = '👑 Admin Active';
         document.getElementById('nav-item-admin').style.display = 'flex';
+        document.getElementById('btn-logout-auth').style.display = 'inline-flex';
         switchTab('admin');
         renderAdminDashboard();
         alert('बधाई हो! jaicomputerosian@gmail.com ऑथोराइज़्ड एडमिन पैनल खुल गया है!');
@@ -1101,6 +1120,7 @@ function verifyUserMobileOtp() {
         localStorage.setItem('vedaastra_user_mobile', userAuthState.mobile);
         closeLegalModal('modal-user-login');
         document.getElementById('btn-user-auth').innerText = `👤 ${userAuthState.mobile}`;
+        document.getElementById('btn-logout-auth').style.display = 'inline-flex';
         switchTab('history');
         renderUserHistory();
         alert(`सफल लॉगिन! मोबाइल नंबर +91-${userAuthState.mobile} से इतिहास सक्रिय हो गया है।`);
