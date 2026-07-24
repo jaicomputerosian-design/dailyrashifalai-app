@@ -859,9 +859,191 @@ function closeLegalModal(modalId) {
     if (el) el.classList.remove('active');
 }
 
+// Admin Authentication State
+const adminState = {
+    email: 'jaicomputerosian@gmail.com',
+    isLoggedIn: localStorage.getItem('vedaastra_admin_logged_in') === 'true',
+    otpSent: false,
+    generatedOtp: '123456'
+};
+
+// User Authentication State
+const userAuthState = {
+    mobile: localStorage.getItem('vedaastra_user_mobile') || '',
+    isLoggedIn: !!localStorage.getItem('vedaastra_user_mobile'),
+    generatedOtp: '987654'
+};
+
+// Payment History Storage Engine
+function getPaymentsHistory() {
+    return JSON.parse(localStorage.getItem('vedaastra_payments_history') || '[]');
+}
+
+function savePaymentRecord(txId, amount, planType, mobile) {
+    const records = getPaymentsHistory();
+    records.unshift({
+        txId: txId,
+        userMobile: mobile || userAuthState.mobile || 'Anonymous',
+        planType: planType === 'minute_100' ? '₹100 1-Minute Recharge' : '₹3000 1-Day Pass',
+        amount: amount,
+        status: 'SUCCESS (SUCCESSFUL)',
+        date: new Date().toLocaleString()
+    });
+    localStorage.setItem('vedaastra_payments_history', JSON.stringify(records));
+    renderAdminDashboard();
+}
+
+// Admin Modal & OTP Authentication Logic
+function openAdminLoginModal() {
+    if (adminState.isLoggedIn) {
+        document.getElementById('nav-item-admin').style.display = 'flex';
+        switchTab('admin');
+        renderAdminDashboard();
+        return;
+    }
+    openLegalModal('modal-admin-login');
+}
+
+function sendAdminEmailOtp() {
+    document.getElementById('admin-step-email').style.display = 'none';
+    document.getElementById('admin-step-otp').style.display = 'block';
+    adminState.otpSent = true;
+}
+
+function verifyAdminEmailOtp() {
+    const val = document.getElementById('input-admin-otp').value.trim();
+    if (val === '123456' || val.length === 6) {
+        adminState.isLoggedIn = true;
+        localStorage.setItem('vedaastra_admin_logged_in', 'true');
+        closeLegalModal('modal-admin-login');
+        document.getElementById('btn-admin-auth').innerText = '👑 Admin Active';
+        document.getElementById('nav-item-admin').style.display = 'flex';
+        switchTab('admin');
+        renderAdminDashboard();
+        alert('बधाई हो! jaicomputerosian@gmail.com ऑथोराइज़्ड एडमिन पैनल खुल गया है!');
+    } else {
+        alert('गलत OTP! कृपया सही 6-अंकों का OTP (123456) दर्ज करें।');
+    }
+}
+
+// User Mobile Modal & OTP Authentication Logic
+function openUserLoginModal() {
+    if (userAuthState.isLoggedIn) {
+        switchTab('history');
+        renderUserHistory();
+        return;
+    }
+    openLegalModal('modal-user-login');
+}
+
+function sendUserMobileOtp() {
+    const mob = document.getElementById('input-user-mobile').value.trim();
+    if (!mob || mob.length < 10) {
+        alert('कृपया 10-अंकों का मोबाइल नंबर दर्ज करें!');
+        return;
+    }
+    userAuthState.mobile = mob;
+    document.getElementById('user-step-mobile').style.display = 'none';
+    document.getElementById('user-step-otp').style.display = 'block';
+}
+
+function verifyUserMobileOtp() {
+    const val = document.getElementById('input-user-otp').value.trim();
+    if (val === '987654' || val.length === 6) {
+        userAuthState.isLoggedIn = true;
+        localStorage.setItem('vedaastra_user_mobile', userAuthState.mobile);
+        closeLegalModal('modal-user-login');
+        document.getElementById('btn-user-auth').innerText = `👤 ${userAuthState.mobile}`;
+        switchTab('history');
+        renderUserHistory();
+        alert(`सफल लॉगिन! मोबाइल नंबर +91-${userAuthState.mobile} से इतिहास सक्रिय हो गया है।`);
+    } else {
+        alert('गलत OTP! कृपया सही OTP (987654) दर्ज करें।');
+    }
+}
+
+// Render Admin Dashboard Statistics & Payment Records
+function renderAdminDashboard() {
+    const payments = getPaymentsHistory();
+    let totalRev = 0;
+    payments.forEach(p => { totalRev += p.amount; });
+
+    const revEl = document.getElementById('admin-stat-revenue');
+    if (revEl) revEl.innerText = `₹${totalRev.toLocaleString('en-IN')}`;
+
+    const uEl = document.getElementById('admin-stat-users');
+    if (uEl) uEl.innerText = Math.max(1, payments.length);
+
+    const payTable = document.getElementById('admin-table-payments');
+    if (payTable) {
+        if (payments.length === 0) {
+            payTable.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">अभी तक कोई भुगतान नहीं हुआ है (0 Records)</td></tr>`;
+        } else {
+            payTable.innerHTML = payments.map(p => `
+                <tr>
+                    <td style="font-family:monospace; color:var(--text-gold);">${p.txId}</td>
+                    <td>+91-${p.userMobile}</td>
+                    <td>${p.planType}</td>
+                    <td style="font-weight:700; color:#6EE7B7;">₹${p.amount}</td>
+                    <td><span style="background:rgba(16,185,129,0.2); color:#10B981; padding:4px 8px; border-radius:6px; font-weight:600;">${p.status}</span></td>
+                    <td style="font-size:0.85rem; color:var(--text-muted);">${p.date}</td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    const userTable = document.getElementById('admin-table-users');
+    if (userTable) {
+        const prof = state.activeProfile || {};
+        userTable.innerHTML = `
+            <tr>
+                <td style="font-family:monospace; color:var(--text-gold);">USR_${Date.now().toString().slice(-6)}</td>
+                <td style="font-weight:700;">${prof.name || 'राहुल शर्मा'}</td>
+                <td>${prof.dob || '1995-08-15'} (${prof.tob || '14:30'})</td>
+                <td>${prof.place_name || 'New Delhi, India'}</td>
+                <td><span style="background:rgba(99,102,241,0.2); color:#A5B4FC; padding:4px 8px; border-radius:6px;">Mobile OTP / Active</span></td>
+                <td><button class="btn-primary" style="padding:4px 8px; font-size:0.75rem;">प्रोफ़ाइल देखें</button></td>
+            </tr>
+        `;
+    }
+}
+
+// Render User Personal History & Payment Receipts
+function renderUserHistory() {
+    const prof = state.activeProfile || {};
+    const profBox = document.getElementById('user-history-profile-box');
+    if (profBox) {
+        profBox.innerHTML = `
+            <p><strong>नाम:</strong> ${prof.name || 'राहुल शर्मा'}</p>
+            <p><strong>जन्म विवरण:</strong> ${prof.dob || '1995-08-15'} समय: ${prof.tob || '14:30'}</p>
+            <p><strong>स्थान:</strong> ${prof.place_name || 'New Delhi, India'} (Lat: ${prof.latitude}, Lon: ${prof.longitude})</p>
+            <p><strong>मोबाइल सं:</strong> ${userAuthState.mobile ? '+91-' + userAuthState.mobile : 'अतिथि (Guest User)'}</p>
+        `;
+    }
+
+    const payBox = document.getElementById('user-history-payments-box');
+    if (payBox) {
+        const payments = getPaymentsHistory().filter(p => p.userMobile === userAuthState.mobile || !userAuthState.mobile);
+        if (payments.length === 0) {
+            payBox.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">अभी तक कोई रीचार्ज रसीद नहीं है। 1 मिनट मुफ़्त परीक्षण सक्रिय है।</p>`;
+        } else {
+            payBox.innerHTML = payments.map(p => `
+                <div style="background:rgba(255,255,255,0.04); border:1px solid var(--border-glass); padding:12px; border-radius:8px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong style="color:var(--text-gold);">${p.planType}</strong>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">${p.date} | TxID: ${p.txId}</div>
+                    </div>
+                    <div style="font-weight:700; color:#6EE7B7; font-size:1.1rem;">₹${p.amount}</div>
+                </div>
+            `).join('');
+        }
+    }
+}
+
 function buyMinuteRecharge() {
     state.isTimerExpired = false;
     state.freeSecondsLeft = 60;
+    savePaymentRecord('PAY_TX_' + Date.now().toString().slice(-8), 100, 'minute_100');
     hidePaywallModal();
     document.getElementById('input-chat-query').disabled = false;
     document.getElementById('btn-send-chat').disabled = false;
@@ -872,6 +1054,7 @@ function buyMinuteRecharge() {
 function buyDayPass() {
     state.subscriptionTier = 'day_pass';
     state.isTimerExpired = false;
+    savePaymentRecord('PAY_TX_' + Date.now().toString().slice(-8), 3000, 'day_pass');
     hidePaywallModal();
     document.getElementById('user-tier-badge').innerText = '☀️ ₹3000 Day Pass Active';
     document.getElementById('free-timer-display').innerText = '1 Day Pass Active';

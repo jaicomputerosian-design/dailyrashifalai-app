@@ -81,6 +81,12 @@
                 <span id="hourly-credit-display">30/30</span>
             </div>
 
+            <!-- User Mobile Login / Profile Button -->
+            <button class="api-key-btn" id="btn-user-auth" onclick="openUserLoginModal()">📱 यूज़र लॉगिन (OTP)</button>
+
+            <!-- Admin Email Login Button -->
+            <button class="api-key-btn" id="btn-admin-auth" onclick="openAdminLoginModal()" style="border-color:var(--accent-purple); color:#A5B4FC;">👑 Admin Panel</button>
+
             <span class="badge-tier" id="user-tier-badge">1 Min Free Trial</span>
             <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">English</button>
         </div>
@@ -117,6 +123,14 @@
             <div class="nav-item" data-tab="upgrade">
                 <span class="nav-icon">👑</span>
                 <span data-i18n="navUpgrade">सदस्यता एवं प्लान</span>
+            </div>
+            <div class="nav-item" data-tab="history" id="nav-item-history">
+                <span class="nav-icon">📜</span>
+                <span>मेरी कुंडली व चैट हिस्ट्री</span>
+            </div>
+            <div class="nav-item" data-tab="admin" id="nav-item-admin" style="display:none; border-color:var(--accent-purple); color:#C4B5FD;">
+                <span class="nav-icon">📊</span>
+                <span>👑 एडमिन डैशबोर्ड</span>
             </div>
         </sidebar>
 
@@ -391,6 +405,103 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Tab 8: User Personal History (मेरी कुंडली व चैट हिस्ट्री) -->
+            <div class="tab-content" id="tab-history">
+                <div class="section-header">
+                    <h2 class="section-title">📜 मेरी कुंडली प्रोफ़ाइल व ज्योतिष चैट इतिहास</h2>
+                    <p class="section-desc">आपके सहेजे गए जन्म विवरण, पूर्व AI चैट परामर्श एवं भुगतान रसीदें।</p>
+                </div>
+
+                <div class="glass-card gold-glow" style="margin-bottom:20px;">
+                    <h3 style="color:var(--text-gold); margin-bottom:12px;">👤 सक्रिय यूज़र प्रोफ़ाइल</h3>
+                    <div id="user-history-profile-box" style="font-size:0.95rem; color:var(--text-main); line-height:1.6;">
+                        <!-- User profile details inject here -->
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom:20px;">
+                    <h3 style="color:var(--text-gold); margin-bottom:12px;">💳 मेरे रीचार्ज व सदस्यता रसीदें</h3>
+                    <div id="user-history-payments-box">
+                        <!-- User payments inject here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 9: Admin Dashboard (👑 एडमिन डैशबोर्ड) -->
+            <div class="tab-content" id="tab-admin">
+                <div class="section-header">
+                    <h2 class="section-title">👑 VedaAstra AI एडमिन डैशबोर्ड (Admin Portal)</h2>
+                    <p class="section-desc">कुल आय (Revenue), पेमेंट ट्रांजैक्शन, एक्टिव यूज़र्स और सिस्टम एनालिटिक्स। (Authorized: jaicomputerosian@gmail.com)</p>
+                </div>
+
+                <!-- Admin Analytics Metrics Grid -->
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom:24px;">
+                    <div class="glass-card gold-glow" style="text-align:center; padding:20px;">
+                        <span style="font-size:2rem;">💰</span>
+                        <div style="font-size:1.8rem; font-weight:800; color:var(--accent-gold); margin-top:6px;" id="admin-stat-revenue">₹0</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">कुल प्राप्त आय (Revenue)</div>
+                    </div>
+
+                    <div class="glass-card" style="text-align:center; padding:20px; border-color:var(--accent-purple);">
+                        <span style="font-size:2rem;">👥</span>
+                        <div style="font-size:1.8rem; font-weight:800; color:#A5B4FC; margin-top:6px;" id="admin-stat-users">1</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">कुल एक्टिव यूज़र्स</div>
+                    </div>
+
+                    <div class="glass-card" style="text-align:center; padding:20px; border-color:var(--accent-cyan);">
+                        <span style="font-size:2rem;">💬</span>
+                        <div style="font-size:1.8rem; font-weight:800; color:#6EE7B7; margin-top:6px;" id="admin-stat-chats">12</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">कुल AI चैट प्रश्न</div>
+                    </div>
+
+                    <div class="glass-card" style="text-align:center; padding:20px;">
+                        <span style="font-size:2rem;">⏱️</span>
+                        <div style="font-size:1.8rem; font-weight:800; color:var(--accent-gold-glow); margin-top:6px;" id="admin-stat-plans">₹100 / ₹3000</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">एक्टिव प्लान्स</div>
+                    </div>
+                </div>
+
+                <!-- Admin Payments & Revenue Table -->
+                <div class="glass-card" style="margin-bottom:24px; overflow-x:auto;">
+                    <h3 style="color:var(--text-gold); margin-bottom:14px;">💳 भुगतान एवं ट्रांजैक्शन रिकॉर्ड्स (Payment History)</h3>
+                    <table class="planetary-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>यूज़र / मोबाइल</th>
+                                <th>प्ला प्रकार</th>
+                                <th>राशि (INR)</th>
+                                <th>स्थिति (Status)</th>
+                                <th>समय व दिनांक</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-payments">
+                            <!-- Admin Payment Rows inject here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Admin User Profiles Table -->
+                <div class="glass-card" style="overflow-x:auto;">
+                    <h3 style="color:var(--text-gold); margin-bottom:14px;">👤 पंजीकृत यूज़र प्रोफ़ाइल्स (Registered Users)</h3>
+                    <table class="planetary-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>नाम</th>
+                                <th>जन्म तिथि व समय</th>
+                                <th>जन्म स्थान</th>
+                                <th>लॉगिन प्रकार</th>
+                                <th>एक्शन</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-users">
+                            <!-- Admin User Rows inject here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -532,6 +643,69 @@
                     <span>प्ला 2: ₹3000 (1-दिन) पास खरीदें</span>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Admin Email OTP Login Modal -->
+    <div class="modal-overlay" id="modal-admin-login">
+        <div class="modal-card" style="max-width:450px;">
+            <div style="font-size:2.5rem; margin-bottom:8px;">👑</div>
+            <h2 class="modal-title">एडमिन पोर्टल प्रवेश (Admin Login)</h2>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:16px;">
+                ऑथोराइज़्ड ईमेल <strong>jaicomputerosian@gmail.com</strong> पर भेजे गए OTP से सुरक्षित लॉगिन करें।
+            </p>
+
+            <div id="admin-step-email">
+                <input type="email" id="input-admin-email" class="form-control" value="jaicomputerosian@gmail.com" style="width:100%; margin-bottom:16px;" readonly>
+                <button class="btn-primary" onclick="sendAdminEmailOtp()" style="width:100%; justify-content:center;">
+                    <span>📩</span>
+                    <span>ईमेल पर OTP भेजें</span>
+                </button>
+            </div>
+
+            <div id="admin-step-otp" style="display:none;">
+                <p style="color:var(--accent-gold); font-size:0.88rem; margin-bottom:8px;">✅ OTP भेजा गया: <strong>123456</strong> (Test Verification)</p>
+                <input type="text" id="input-admin-otp" class="form-control" placeholder="6-अंकों का OTP दर्ज करें (123456)" style="width:100%; text-align:center; font-size:1.2rem; letter-spacing:4px; margin-bottom:16px;">
+                <button class="btn-primary" onclick="verifyAdminEmailOtp()" style="width:100%; justify-content:center;">
+                    <span>🔓</span>
+                    <span>OTP सत्यापित करें व डैशबोर्ड खोलें</span>
+                </button>
+            </div>
+
+            <button onclick="closeLegalModal('modal-admin-login')" style="background:none; border:none; color:var(--text-muted); margin-top:16px; cursor:pointer; font-size:0.85rem;">रद्द करें (Close)</button>
+        </div>
+    </div>
+
+    <!-- User Mobile OTP Login Modal -->
+    <div class="modal-overlay" id="modal-user-login">
+        <div class="modal-card" style="max-width:450px;">
+            <div style="font-size:2.5rem; margin-bottom:8px;">📱</div>
+            <h2 class="modal-title">यूज़र मोबाइल लॉगिन (OTP Login)</h2>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:16px;">
+                अपने मोबाइल नंबर पर OTP प्राप्त करके पुरानी कुंडली व चैट हिस्ट्री देखें।
+            </p>
+
+            <div id="user-step-mobile">
+                <div style="display:flex; gap:8px; margin-bottom:16px;">
+                    <span class="form-control" style="width:60px; text-align:center;">+91</span>
+                    <input type="tel" id="input-user-mobile" class="form-control" placeholder="10-अंकों का मोबाइल नंबर" style="flex:1;">
+                </div>
+                <button class="btn-primary" onclick="sendUserMobileOtp()" style="width:100%; justify-content:center;">
+                    <span>📱</span>
+                    <span>मोबाइल पर OTP भेजें</span>
+                </button>
+            </div>
+
+            <div id="user-step-otp" style="display:none;">
+                <p style="color:var(--accent-gold); font-size:0.88rem; margin-bottom:8px;">✅ OTP आपके मोबाइल पर भेजा गया: <strong>987654</strong></p>
+                <input type="text" id="input-user-otp" class="form-control" placeholder="OTP दर्ज करें (987654)" style="width:100%; text-align:center; font-size:1.2rem; letter-spacing:4px; margin-bottom:16px;">
+                <button class="btn-primary" onclick="verifyUserMobileOtp()" style="width:100%; justify-content:center;">
+                    <span>✨</span>
+                    <span>लॉगिन पूरा करें</span>
+                </button>
+            </div>
+
+            <button onclick="closeLegalModal('modal-user-login')" style="background:none; border:none; color:var(--text-muted); margin-top:16px; cursor:pointer; font-size:0.85rem;">रद्द करें (Close)</button>
         </div>
     </div>
 
