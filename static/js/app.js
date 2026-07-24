@@ -909,7 +909,20 @@ function closeLegalModal(modalId) {
     if (el) el.classList.remove('active');
 }
 
-// Secret Hidden Admin Route & Direct URL Checker (?admin=1 or #ailogin)
+// AstroTalk AI Guru Persona Selector
+function selectAiGuru(guruName, specialty) {
+    switchTab('chat');
+    const chatBox = document.getElementById('chat-history-box');
+    if (!chatBox) return;
+
+    chatBox.innerHTML += `
+        <div class="chat-message ai" style="border-left:4px solid var(--accent-gold); background:rgba(245,158,11,0.08);">
+            <strong>प्रणाम! 🕉️ मैं ${guruName} हूँ (${specialty} विशेषज्ञ)।</strong><br>
+            आपके जीवन, करियर, धन या विवाह से जुड़ी किसी भी समस्या के समाधान के लिए मैं भारत के सनातन ग्रंथों व पराशर शास्त्र के अनुसार आपका मार्गदर्शन करने हेतु तत्पर हूँ। अपना प्रश्न नीचे लिखें...
+        </div>
+    `;
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 window.addEventListener('DOMContentLoaded', () => {
     const search = window.location.search.toLowerCase();
     const hash = window.location.hash.toLowerCase();
