@@ -482,20 +482,48 @@ function toggleVoiceSpeech() {
     rec.start();
 }
 
-// Razorpay Payment Integration (UPI / QR / Cards)
-function triggerRazorpayPayment(amount, planType) {
+// Anti-Screenshot Event Protection (Text Copying Remains Enabled)
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'PrintScreen') {
+        document.body.classList.add('screenshot-protected');
+        alert('📷 सुरक्षा सूचना: VedaAstra AI पर स्क्रीनशॉट संरक्षित है। आप टेक्स्ट कॉपी कर सकते हैं!');
+        setTimeout(() => {
+            document.body.classList.remove('screenshot-protected');
+        }, 2000);
+    }
+});
+
+// Dropdown Pricing Matrix Purchaser
+function buyDropdownPlan() {
+    const val = document.getElementById('select-dropdown-plan').value;
+    executePlanPurchase(val);
+}
+
+function buyModalDropdownPlan() {
+    const val = document.getElementById('modal-dropdown-plan').value;
+    executePlanPurchase(val);
+}
+
+function executePlanPurchase(planKey) {
+    let amount = 100, addSeconds = 120, planLabel = '₹100 - 2 मिनट';
+    if (planKey === '100_2') { amount = 100; addSeconds = 120; planLabel = '₹100 - 2 मिनट'; }
+    else if (planKey === '300_5') { amount = 300; addSeconds = 300; planLabel = '₹300 - 5 मिनट'; }
+    else if (planKey === '500_10') { amount = 500; addSeconds = 600; planLabel = '₹500 - 10 मिनट'; }
+    else if (planKey === '1000_20') { amount = 1000; addSeconds = 1200; planLabel = '₹1,000 - 20 मिनट'; }
+    else if (planKey === '3000_60') { amount = 3000; addSeconds = 3600; planLabel = '₹3,000 - 1 घंटा'; }
+
+    triggerRazorpayPayment(amount, planKey, addSeconds, planLabel);
+}
+
+function triggerRazorpayPayment(amount, planType, addSeconds = 120, planLabel = 'Recharge') {
     const options = {
-        "key": "rzp_test_VedaAstraLive", // Razorpay Test / Live Key
-        "amount": amount * 100, // Amount in paise
+        "key": "rzp_test_VedaAstraLive",
+        "amount": amount * 100,
         "currency": "INR",
         "name": "VedaAstra AI (DailyRashifalai.com)",
-        "description": planType === 'minute_100' ? "₹100 (1 Minute Usage Recharge)" : "₹3000 (1 Day Pass)",
+        "description": `${planLabel} Astrological Chat Access`,
         "handler": function (response) {
-            if (planType === 'minute_100') {
-                buyMinuteRecharge();
-            } else {
-                buyDayPass();
-            }
+            activateRechargeAccess(amount, planType, addSeconds, planLabel);
         },
         "theme": { "color": "#F59E0B" }
     };
@@ -504,13 +532,20 @@ function triggerRazorpayPayment(amount, planType) {
         const rzp = new Razorpay(options);
         rzp.open();
     } else {
-        // Fallback simulation for live test mode
-        if (planType === 'minute_100') {
-            buyMinuteRecharge();
-        } else {
-            buyDayPass();
-        }
+        activateRechargeAccess(amount, planType, addSeconds, planLabel);
     }
+}
+
+function activateRechargeAccess(amount, planType, addSeconds, planLabel) {
+    state.isTimerExpired = false;
+    state.freeSecondsLeft += addSeconds;
+    savePaymentRecord('PAY_TX_' + Date.now().toString().slice(-8), amount, planLabel);
+    hidePaywallModal();
+    document.getElementById('user-tier-badge').innerText = `⚡ ${planLabel} Active`;
+    document.getElementById('input-chat-query').disabled = false;
+    document.getElementById('btn-send-chat').disabled = false;
+    alert(state.lang === 'hi' ? `सफल! ${planLabel} रीचार्ज हो गया है।` : `Success! ${planLabel} activated.`);
+    startFreeUsageTimer();
 }
 
 // 1-Click WhatsApp Viral Kundli Share
@@ -791,10 +826,25 @@ function sendChatMessage() {
     `;
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    setTimeout(() => {
         const loadingElem = document.getElementById(loadingId);
         const name = state.activeProfile ? state.activeProfile.name : "राहुल शर्मा (Rahul Sharma)";
         const c = state.activeChart;
+
+        // Human-Only Astrology Check
+        const nonHumanKeywords = ['dog', 'cat', 'animal', 'pet', 'कुत्ता', 'बिल्ली', 'गाय', 'पशु', 'जानवर', 'कार', 'गाड़ी', 'मकान'];
+        const isNonHuman = nonHumanKeywords.some(k => query.toLowerCase().includes(k));
+
+        if (isNonHuman) {
+            loadingElem.innerHTML = `
+                <div style="color:var(--text-gold); font-weight:600;">
+                    🕉️ <strong>वेदअस्त्र AI - केवल मानव जीवन ज्योतिष (Human-Only Astrology):</strong><br><br>
+                    प्रणाम! <strong>VedaAstra AI</strong> केवल <strong>मानव जीवन, मानव जन्म-कुंडली एवं सनातन शास्त्रों (ऋग्वेद, विष्णु पुराण, बृहत्पाराशर होराशास्त्र)</strong> से प्रामाणिक मार्गदर्शन प्रदान करता है।<br><br>
+                    कृपया अपना सही मानव नाम, जन्म तिथि व समय दर्ज करें और अपने करियर, विवाह, धन या स्वास्थ्य से संबंधित प्रश्न पूछें।
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return;
+        }
 
         let ansText = "";
         if (state.lang === 'hi') {

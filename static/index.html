@@ -51,6 +51,19 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/static/css/style.css">
 
+    <!-- Anti-Screenshot & Anti-Print CSS Protection (Allows Text Copying) -->
+    <style>
+        @media print {
+            html, body {
+                display: none !important;
+                visibility: hidden !important;
+            }
+        }
+        body.screenshot-protected {
+            filter: blur(20px) !important;
+        }
+    </style>
+
     <!-- Razorpay & HTML2PDF SDK Scripts -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -119,6 +132,10 @@
             <div class="nav-item" data-tab="library">
                 <span class="nav-icon">📚</span>
                 <span data-i18n="navLibrary">ग्रंथ ज्ञान-भंडार</span>
+            </div>
+            <div class="nav-item" data-tab="about">
+                <span class="nav-icon">📖</span>
+                <span>हमारे बारे में (About VedaAstra)</span>
             </div>
             <div class="nav-item" data-tab="upgrade">
                 <span class="nav-icon">👑</span>
@@ -372,41 +389,73 @@
                 </div>
             </div>
 
-            <!-- Tab 7: Upgrade / Official Pricing Plans -->
-            <div class="tab-content" id="tab-upgrade">
+            <!-- Tab 7: About Us (हमारे बारे में) -->
+            <div class="tab-content" id="tab-about">
                 <div class="section-header">
-                    <h2 class="section-title">👑 सदस्यता एवं आधिकारिक प्लान (Pricing Plans)</h2>
-                    <p class="section-desc">1 मिनट मुफ़्त परीक्षण के बाद अपना पसंदीदा प्लान चुनें। AI क्रेडिट सीमा: 30 प्रश्न/घंटा।</p>
+                    <h2 class="section-title">📖 हमारे बारे में (About VedaAstra AI)</h2>
+                    <p class="section-desc">भारत के वेदों, पुराणों एवं शास्त्रों से 100% प्रामाणिक AI ज्योतिष का वैश्विक प्लेटफ़ॉर्म।</p>
+                </div>
+
+                <div class="glass-card gold-glow" style="margin-bottom:20px;">
+                    <h3 style="color:var(--text-gold); margin-bottom:10px;">🕉️ वेदअस्त्र AI (VedaAstra AI) क्या है?</h3>
+                    <p style="color:var(--text-main); font-size:0.95rem; line-height:1.7;">
+                        <strong>VedaAstra AI (DailyRashifalai.com)</strong> भारत का पहला ऐसा शास्त्रीय AI ज्योतिष प्लेटफ़ॉर्म है जो किसी भी जातक (केवल मानव जीवन) की जन्म-तिथि, समय और स्थान के आधार पर <strong>ऋग्वेद, विष्णु पुराण, अग्नि पुराण तथा बृहत्पाराशर होराशास्त्र</strong> के प्रामाणिक नियमों का मिलान करके सत्य मार्ग और सटीक सात्विक उपाय बताता है।
+                    </p>
                 </div>
 
                 <div class="form-grid">
-                    <div class="glass-card gold-glow">
-                        <h3 style="color:var(--text-gold);">⏱️ प्लान 1: प्रति मिनट रीचार्ज</h3>
-                        <div class="rate-badge">₹100 / मिनट</div>
-                        <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-top:8px;">
-                            जितना उपयोग करें, केवल उसी का भुगतान करें। UPI/QR Code द्वारा त्वरित रीचार्ज।
+                    <div class="glass-card">
+                        <h4 style="color:var(--accent-gold);">📜 शास्त्रीय प्रामाणिकता (100% Scriptural RAG)</h4>
+                        <p style="color:var(--text-muted); font-size:0.88rem; margin-top:8px; line-height:1.6;">
+                            हमारा AI इंजन इंटरनेट के भ्रामक अनुमानों के बजाय मूल संस्कृत श्लोकों और महर्षि पराशर के सिद्धांतों से जातक के कर्म, दशा व गोचर का विश्लेषण करता है।
                         </p>
-                        <button class="btn-primary" onclick="triggerRazorpayPayment(100, 'minute_100')" style="width:100%; justify-content:center; margin-top:16px;">
-                            <span>⚡</span>
-                            <span>₹100 (UPI / QR / Razorpay) रीचार्ज करें</span>
-                        </button>
                     </div>
 
-                    <div class="glass-card gold-glow" style="border-color: var(--accent-purple); box-shadow: 0 0 25px rgba(139, 92, 246, 0.3);">
-                        <h3 style="color:#A5B4FC;">☀️ प्लान 2: 1-दिन अनलिमिटेड चैट पास</h3>
-                        <div class="rate-badge" style="background: rgba(139, 92, 246, 0.2); border-color: var(--accent-purple); color: #C4B5FD;">₹3000 / 1-दिन (Day Pass)</div>
-                        <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin-top:8px;">
-                            पूरे 24 घंटे के लिए असीमित वेद, पुराण और ज्योतिष AI चैट का एक्सेस पाएँ।
+                    <div class="glass-card">
+                        <h4 style="color:var(--accent-purple);">🔒 केवल मानव जीवन ज्योतिष (Human-Only Astrology)</h4>
+                        <p style="color:var(--text-muted); font-size:0.88rem; margin-top:8px; line-height:1.6;">
+                            यह प्लेटफ़ॉर्म केवल मानव जीवन की जन्म-कुंडली के लिए डिज़ाइन किया गया है। किसी भी अमानवीय विषय, जानवर या गैर-ज्योतिषीय प्रश्नों का AI उत्तर नहीं देता है।
                         </p>
-                        <button class="btn-primary" onclick="triggerRazorpayPayment(3000, 'day_pass')" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color:white; width: 100%; justify-content: center; margin-top:16px;">
-                            <span>👑</span>
-                            <span>₹3000 (UPI / QR / Card) पास खरीदें</span>
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab 8: User Personal History (मेरी कुंडली व चैट हिस्ट्री) -->
+            <!-- Tab 8: Upgrade / Official Dropdown Pricing Plans -->
+            <div class="tab-content" id="tab-upgrade">
+                <div class="section-header">
+                    <h2 class="section-title">👑 सदस्यता एवं रीचार्ज प्लान्स (Dropdown Recharges)</h2>
+                    <p class="section-desc">अपनी सुविधानुसार ड्रॉपडाउन से प्लान चुनें और instant UPI / Razorpay से रीचार्ज करें।</p>
+                </div>
+
+                <div class="glass-card gold-glow" style="max-width:600px; margin:0 auto; text-align:center; padding:28px;">
+                    <h3 style="color:var(--text-gold); margin-bottom:12px;">⚡ अपना पसंदीदा रीचार्ज प्लान चुनें</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
+                        नीचे दिए गए ड्रॉपडाउन से समय सीमा चुनें। API टोकन्स सुरक्षित व सीमित उपयोग के लिए सेट हैं।
+                    </p>
+
+                    <div style="margin-bottom:24px;">
+                        <label style="display:block; color:var(--text-gold); font-size:0.9rem; font-weight:600; margin-bottom:8px;">रीचार्ज प्लान चुनें (Select Plan):</label>
+                        <select id="select-dropdown-plan" class="form-control" style="font-size:1.1rem; padding:12px; font-weight:700; color:var(--accent-gold); text-align:center; background:#0B0F19;">
+                            <option value="100_2">⏱️ ₹100 - 2 मिनट रीचार्ज</option>
+                            <option value="300_5">⏱️ ₹300 - 5 मिनट रीचार्ज</option>
+                            <option value="500_10">⏱️ ₹500 - 10 मिनट रीचार्ज</option>
+                            <option value="1000_20">⚡ ₹1,000 - 20 मिनट रीचार्ज</option>
+                            <option value="3000_60">👑 ₹3,000 - 1 घंटा (60 मिनट) पास</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" onclick="buyDropdownPlan()" style="width:100%; justify-content:center; padding:14px; font-size:1.1rem; background:linear-gradient(135deg,#F59E0B,#D97706); font-weight:700;">
+                        <span>💳</span>
+                        <span>चुना हुआ प्लान अभी खरीदें (Razorpay / UPI)</span>
+                    </button>
+
+                    <div style="margin-top:16px; font-size:0.8rem; color:var(--text-muted);">
+                        🔒 100% सुरक्षित भुगतान (Razorpay SSL Gateway) | ⚡ त्वरित सक्रियता
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 9: User Personal History (मेरी कुंडली व चैट हिस्ट्री) -->
             <div class="tab-content" id="tab-history">
                 <div class="section-header">
                     <h2 class="section-title">📜 मेरी कुंडली प्रोफ़ाइल व ज्योतिष चैट इतिहास</h2>
@@ -428,7 +477,7 @@
                 </div>
             </div>
 
-            <!-- Tab 9: Admin Dashboard (👑 एडमिन डैशबोर्ड) -->
+            <!-- Tab 10: Admin Dashboard (👑 एडमिन डैशबोर्ड) -->
             <div class="tab-content" id="tab-admin">
                 <div class="section-header">
                     <h2 class="section-title">👑 VedaAstra AI एडमिन डैशबोर्ड (Admin Portal)</h2>
@@ -573,16 +622,14 @@
     <div class="modal-overlay" id="modal-refund">
         <div class="modal-card" style="max-width:700px; text-align:left; max-height:85vh; overflow-y:auto;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-                <h2 class="modal-title" style="margin:0;">💸 Refund & Cancellation Policy (रिफंड नीति)</h2>
+                <h2 class="modal-title" style="margin:0;">💸 Refund & Cancellation Policy (रिफंड नीति - No Refund)</h2>
                 <button onclick="closeLegalModal('modal-refund')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">✖</button>
             </div>
             <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.6;">
-                <h3 style="color:var(--text-gold);">1. Instant Digital Service Delivery</h3>
-                <p>Since <strong>DailyRashifalai.com</strong> offers instant digital AI astrological analysis and digital credit recharges, services are consumed immediately upon payment completion.</p><br>
-                <h3 style="color:var(--text-gold);">2. Refund Eligibility</h3>
-                <p>If payment was debited from your account but credits/access were not delivered due to a technical error, a 100% full refund will be processed to your original payment method within 5-7 working days.</p><br>
-                <h3 style="color:var(--text-gold);">3. Cancellation Process</h3>
-                <p>To request a refund for failed transactions, please email your Razorpay Payment ID to <strong>support@dailyrashifalai.com</strong> within 7 days of purchase.</p>
+                <h3 style="color:var(--accent-red);">1. Non-Refundable Digital Services (रिफंड देय नहीं है)</h3>
+                <p>Since <strong>DailyRashifalai.com (VedaAstra AI)</strong> provides instant digital SaaS products, AI computation, and planetary ephemeris analysis, API credits and tokens are consumed immediately upon purchase. Therefore, <strong>all purchases and recharges are 100% Non-Refundable (कोई रिफंड नहीं दिया जाएगा)</strong>.</p><br>
+                <h3 style="color:var(--text-gold);">2. Technical Error Exceptions</h3>
+                <p>In the rare event that payment was debited from your account via Razorpay but service access/credits were not delivered due to a server error, please contact <strong>support@dailyrashifalai.com</strong> with your Razorpay Payment ID. A credit adjustment or manual activation will be processed within 48 hours.</p>
             </div>
         </div>
     </div>
@@ -624,25 +671,29 @@
         </div>
     </div>
 
-    <!-- 1-Minute Expired Paywall Modal -->
+    <!-- 1-Minute Expired Paywall Modal (Clean Dropdown Selector Integration) -->
     <div class="modal-overlay" id="paywall-modal">
-        <div class="modal-card">
+        <div class="modal-card" style="max-width:480px;">
             <div style="font-size: 3rem; margin-bottom: 8px;">🛑</div>
             <h2 class="modal-title">1 मिनट का मुफ़्त परीक्षण समाप्त!</h2>
-            <p style="color:var(--text-muted); line-height: 1.6;">
-                आपका 1 मिनट (60 सेकंड) का निःशुल्क परीक्षण समाप्त हो गया है। आगे वेद, पुराण एवं ज्योतिष चैट जारी रखने के लिए UPI या कार्ड द्वारा प्लान चुनें:
+            <p style="color:var(--text-muted); line-height: 1.6; font-size:0.9rem;">
+                आपका मुफ़्त परीक्षण समाप्त हो गया है। आगे वेद, पुराण एवं ज्योतिष AI चैट जारी रखने के लिए ड्रॉपडाउन से रीचार्ज प्लान चुनें:
             </p>
 
-            <div style="display:flex; flex-direction:column; gap:14px; margin-top:20px;">
-                <button class="btn-primary" onclick="triggerRazorpayPayment(100, 'minute_100')" style="justify-content:center;">
-                    <span>⏱️</span>
-                    <span>प्ला 1: ₹100 (1 मिनट) UPI रीचार्ज करें</span>
-                </button>
-                <button class="btn-primary" onclick="triggerRazorpayPayment(3000, 'day_pass')" style="background: linear-gradient(135deg, #8B5CF6, #6366F1); color:white; justify-content:center;">
-                    <span>☀️</span>
-                    <span>प्ला 2: ₹3000 (1-दिन) पास खरीदें</span>
-                </button>
+            <div style="margin:20px 0;">
+                <select id="modal-dropdown-plan" class="form-control" style="font-size:1rem; padding:10px; font-weight:700; color:var(--accent-gold); text-align:center; background:#0B0F19; width:100%;">
+                    <option value="100_2">⏱️ ₹100 - 2 मिनट रीचार्ज</option>
+                    <option value="300_5">⏱️ ₹300 - 5 मिनट रीचार्ज</option>
+                    <option value="500_10">⏱️ ₹500 - 10 मिनट रीचार्ज</option>
+                    <option value="1000_20">⚡ ₹1,000 - 20 मिनट रीचार्ज</option>
+                    <option value="3000_60">👑 ₹3,000 - 1 घंटा (60 मिनट) पास</option>
+                </select>
             </div>
+
+            <button class="btn-primary" onclick="buyModalDropdownPlan()" style="width:100%; justify-content:center; padding:12px; font-weight:700; font-size:1rem;">
+                <span>💳</span>
+                <span>प्ला चुनें व UPI / Razorpay से खरीदें</span>
+            </button>
         </div>
     </div>
 
