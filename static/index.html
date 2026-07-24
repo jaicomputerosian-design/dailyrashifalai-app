@@ -84,21 +84,34 @@
         <div class="header-actions">
             <!-- 1-Minute Live Free Timer -->
             <div class="timer-badge" id="free-timer-badge">
-                <span>⏱️ मुफ़्त समय:</span>
+                <span>⏱️ समय:</span>
                 <span id="free-timer-display">01:00</span>
             </div>
 
+            <!-- Header Quick Dropdown Plan Purchaser -->
+            <select id="header-plan-select" onchange="buyHeaderPlanSelect(this.value)" class="lang-btn" style="background:rgba(245, 158, 11, 0.15); border-color:var(--accent-gold); color:var(--text-gold); font-weight:700; outline:none; cursor:pointer;">
+                <option value="">⚡ प्लान चुनें (Buy Plan)</option>
+                <option value="100_2">⏱️ ₹100 - 2 मिनट</option>
+                <option value="300_5">⏱️ ₹300 - 5 मिनट</option>
+                <option value="500_10">⏱️ ₹500 - 10 मिनट</option>
+                <option value="1000_20">⚡ ₹1,000 - 20 मिनट</option>
+                <option value="3000_60">👑 ₹3,000 - 1 घंटा</option>
+            </select>
+
             <!-- Hourly AI Credit Limiter Meter -->
             <div class="timer-badge" style="background: rgba(99, 102, 241, 0.15); border-color: var(--accent-indigo); color: #A5B4FC;">
-                <span>⚡ AI क्रेडिट:</span>
+                <span>⚡ AI:</span>
                 <span id="hourly-credit-display">30/30</span>
             </div>
 
-            <!-- User Mobile Login / Profile Button -->
-            <button class="api-key-btn" id="btn-user-auth" onclick="openUserLoginModal()">📱 यूज़र लॉगिन (OTP)</button>
+            <!-- Bhagavad Gita Divine Flute Music Toggle -->
+            <button class="lang-btn" id="btn-gita-music" onclick="toggleGitaMusic()" style="border-color:var(--accent-gold);">🎵 गीता संगीत (Off)</button>
 
-            <!-- Admin Email Login Button -->
-            <button class="api-key-btn" id="btn-admin-auth" onclick="openAdminLoginModal()" style="border-color:var(--accent-purple); color:#A5B4FC;">👑 Admin Panel</button>
+            <!-- User Mobile Login / Profile Button -->
+            <button class="api-key-btn" id="btn-user-auth" onclick="openUserLoginModal()">📱 लॉगिन (OTP)</button>
+
+            <!-- Logout Button -->
+            <button class="api-key-btn" id="btn-logout-auth" onclick="logoutSession()" style="display:none; border-color:var(--accent-red); color:#FCA5A5;">🚪 लॉगआउट</button>
 
             <span class="badge-tier" id="user-tier-badge">1 Min Free Trial</span>
             <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">English</button>
@@ -504,10 +517,33 @@
                         <div style="font-size:0.85rem; color:var(--text-muted);">कुल AI चैट प्रश्न</div>
                     </div>
 
-                    <div class="glass-card" style="text-align:center; padding:20px;">
-                        <span style="font-size:2rem;">⏱️</span>
-                        <div style="font-size:1.8rem; font-weight:800; color:var(--accent-gold-glow); margin-top:6px;" id="admin-stat-plans">₹100 / ₹3000</div>
-                        <div style="font-size:0.85rem; color:var(--text-muted);">एक्टिव प्लान्स</div>
+                    <div class="glass-card" style="text-align:center; padding:20px; border-color:var(--accent-gold);">
+                        <span style="font-size:2rem;">🎯</span>
+                        <div style="font-size:1.4rem; font-weight:700; color:var(--text-gold); margin-top:6px;" id="admin-stat-traffic">Meta Ads / Direct</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">ट्रैफ़िक स्रोत (Traffic Source)</div>
+                    </div>
+                </div>
+
+                <!-- Meta Ads & Traffic Analytics Tracking Breakdown -->
+                <div class="glass-card" style="margin-bottom:24px;">
+                    <h3 style="color:var(--text-gold); margin-bottom:12px;">📊 विज्ञापन एवं ट्रैफ़िक ट्रैकिंग (Meta Ads / Google / Organic Analytics)</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; text-align:center;">
+                        <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid var(--border-glass);">
+                            <div style="font-size:1.2rem; font-weight:700; color:#60A5FA;" id="traffic-meta-ads">Meta Ads (FB/IG): 45%</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">फेसबुक व इंस्टाग्राम विज्ञापन</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid var(--border-glass);">
+                            <div style="font-size:1.2rem; font-weight:700; color:#FBBF24;" id="traffic-google-search">Google Search: 30%</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">गूगल सर्च व ऑर्गेनिक SEO</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid var(--border-glass);">
+                            <div style="font-size:1.2rem; font-weight:700; color:#34D399;" id="traffic-whatsapp">WhatsApp Viral: 15%</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">व्हाट्सएप शेयरिंग लिंक्स</div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid var(--border-glass);">
+                            <div style="font-size:1.2rem; font-weight:700; color:#A78BFA;" id="traffic-direct">Direct Visits: 10%</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">सीधे URL विज़िटर्स</div>
+                        </div>
                     </div>
                 </div>
 

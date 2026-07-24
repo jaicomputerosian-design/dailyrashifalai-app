@@ -909,13 +909,97 @@ function closeLegalModal(modalId) {
     if (el) el.classList.remove('active');
 }
 
-// Admin Authentication State
-const adminState = {
-    email: 'jaicomputerosian@gmail.com',
-    isLoggedIn: localStorage.getItem('vedaastra_admin_logged_in') === 'true',
-    otpSent: false,
-    generatedOtp: '123456'
-};
+// Secret Hidden Admin Route & Direct URL Checker (?admin=1 or #ailogin)
+window.addEventListener('DOMContentLoaded', () => {
+    const search = window.location.search.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    if (search.includes('admin') || search.includes('ailogin') || hash.includes('ailogin')) {
+        document.getElementById('nav-item-admin').style.display = 'flex';
+        openAdminLoginModal();
+    }
+});
+
+// Logout Session Logic
+function logoutSession() {
+    localStorage.removeItem('vedaastra_admin_logged_in');
+    localStorage.removeItem('vedaastra_user_mobile');
+    adminState.isLoggedIn = false;
+    userAuthState.isLoggedIn = false;
+    userAuthState.mobile = '';
+    document.getElementById('btn-admin-auth').innerText = '👑 Admin Panel';
+    document.getElementById('btn-user-auth').innerText = '📱 लॉगिन (OTP)';
+    document.getElementById('btn-logout-auth').style.display = 'none';
+    document.getElementById('nav-item-admin').style.display = 'none';
+    switchTab('chat');
+    alert('लॉगआउट सफल! (Logout Successful)');
+}
+
+// Bhagavad Gita Ambient Divine Flute Synthesizer (Low Volume 0.15)
+let gitaAudioContext = null;
+let isGitaMusicPlaying = false;
+let gitaOscillator = null;
+
+function toggleGitaMusic() {
+    const btn = document.getElementById('btn-gita-music');
+    if (!isGitaMusicPlaying) {
+        try {
+            if (!gitaAudioContext) {
+                gitaAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const osc = gitaAudioContext.createOscillator();
+            const gain = gitaAudioContext.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(432, gitaAudioContext.currentTime); // 432Hz Divine Cosmic Tuning
+            gain.gain.setValueAtTime(0.08, gitaAudioContext.currentTime); // Soft soothing volume
+            osc.connect(gain);
+            gain.connect(gitaAudioContext.destination);
+            osc.start();
+            gitaOscillator = osc;
+            isGitaMusicPlaying = true;
+            if (btn) btn.innerText = '🎵 गीता संगीत (On)';
+        } catch (e) {
+            console.log('Audio init effect', e);
+        }
+    } else {
+        if (gitaOscillator) {
+            gitaOscillator.stop();
+            gitaOscillator = null;
+        }
+        isGitaMusicPlaying = false;
+        if (btn) btn.innerText = '🎵 गीता संगीत (Off)';
+    }
+}
+
+// Header Quick Plan Dropdown Handler
+function buyHeaderPlanSelect(val) {
+    if (!val) return;
+    executePlanPurchase(val);
+    document.getElementById('header-plan-select').value = '';
+}
+
+// User Personal History Deletion (User Screen Cleared, Admin Permanent Record Intact)
+function clearUserHistory() {
+    if (confirm('क्या आप अपनी स्क्रीन से इतिहास साफ़ करना चाहते हैं? (नोट: सुरक्षा के लिए एडमिन डैशबोर्ड में रिकॉर्ड स्थायी सहेजा रहेगा)')) {
+        document.getElementById('user-history-profile-box').innerHTML = `<p style="color:var(--text-muted);">इतिहास साफ़ कर दिया गया है।</p>`;
+        document.getElementById('user-history-payments-box').innerHTML = `<p style="color:var(--text-muted);">कोई स्थानीय रसीद नहीं है।</p>`;
+        alert('स्थानीय स्क्रीन से इतिहास साफ़ हो गया है।');
+    }
+}
+
+// High Quality PDF Export Generator
+function exportKundliPDF() {
+    const element = document.getElementById('pdf-report-content');
+    if (!element) return;
+    const opt = {
+        margin:       10,
+        filename:     `VedaAstra_Kundli_Report_${Date.now()}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 3, useCORS: true, logging: false },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    alert('📄 उच्च गुणवत्ता वाली कॉस्मिक कुंडली PDF डाउनलोड हो रही है...');
+    html2pdf().set(opt).from(element).save();
+}
 
 // User Authentication State
 const userAuthState = {
